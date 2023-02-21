@@ -3,8 +3,8 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
+
 import Landing from "./pages/landing"
 import Home from "./pages/home"
 import Create from "./pages/create"

@@ -26,6 +26,12 @@
     -20px -20px 60px #bebebe;
 }
 
+.googleSignIn {
+  width: 25%;
+  filter: drop-shadow(8px 8px 5px #bebebe) 
+          drop-shadow(-8px -8px 5px #fff)
+}
+
 p {
   font-family: "lato";
   font-size: 2em;
