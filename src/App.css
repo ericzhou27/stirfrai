@@ -25,3 +25,9 @@
   box-shadow: 20px 20px 60px #ffffff,
     -20px -20px 60px #bebebe;
 }
+
+p {
+  font-family: "lato";
+  font-size: 2em;
+  font-weight: 300;
+}
