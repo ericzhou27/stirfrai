@@ -1,6 +1,7 @@
 import React from "react"
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, db } from "../constants/firebaseConfig"
+import { useHistory } from "react-router-dom";
 import '../App.css';
 
 function login() {
@@ -11,7 +12,6 @@ function login() {
             .then((result) => {
                 const user = result.user;
                 console.log(user)
-
                 // TODO - re-route to /home
             }).catch((error) => {
                 console.log("ERROR - ", error)
@@ -23,6 +23,9 @@ function login() {
 }
 
 function Landing() {
+    const currentUser = auth.currentUser
+    console.log("CURRENT - ", currentUser)
+
     return (
         <div className="App">
             <div onClick={login} className="container">
