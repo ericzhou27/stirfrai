@@ -3,7 +3,6 @@ FROM --platform=$BUILDPLATFORM python:3.8-slim AS builder
 
 WORKDIR /app
 
-COPY requirements.txt /app
 COPY crfm-reqs.txt /app/
 
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -11,9 +10,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 RUN pip3 install -r crfm-reqs.txt
 
+COPY requirements.txt /app
+
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install -r requirements.txt
-
 
 COPY . /app
 
