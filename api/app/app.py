@@ -56,7 +56,7 @@ def mealplan():
 
     return response
 
-@app.route('/meal-macros')
+@app.route('/mealmacros')
 def meal_macros():
     auth = autobalance()
 
