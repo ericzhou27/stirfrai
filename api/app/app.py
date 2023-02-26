@@ -14,22 +14,23 @@ from prompts import (
     meal_detail_prompt,
     meal_ingredients_prompt,
     meal_recipe_prompt,
+    meal_recipe_clean_prompt,
 )
 
+# localhost:8080
 @app.route('/')
 def usage():
-    auth = autobalance()
+    auth, used, quota = autobalance()
 
     account = service.get_account(auth)
 
-    used = account.usages['gpt3']['total'].used
-    quota = account.usages['gpt3']['total'].quota
     percent = (used / quota) * 100
     return {'used': used, 'quota': quota, 'percent': percent}
 
+# localhost:8080/macros?height=6'&weight=160 lbs&goal=gain muscle
 @app.route('/macros')
 def macros():
-    auth = autobalance()
+    auth, used, quota = autobalance()
 
     height = request.args.get('height', type=str)
     weight = request.args.get('weight', type=str)
@@ -41,24 +42,28 @@ def macros():
 
     return response
 
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175
 @app.route('/mealplan')
 def mealplan():
-    auth = autobalance()
+    auth, used, quota = autobalance()
 
     carbs = request.args.get('carbs', type=int)
     protein = request.args.get('protein', type=int)
     fat = request.args.get('fat', type=int)
     calories = request.args.get('calories', type=int)
 
-    prompt = meal_detail_prompt(carbs, protein, fat, calories)
+    prompt = meal_plan_prompt(carbs, protein, fat, calories)
 
-    response = prompt_response(auth, prompt)
+    response = []
+    for i in range(7):
+         response.append(prompt_response(auth, prompt, randomness=True))
 
     return response
 
+# localhost:8080/mealmacros?carbs=340&fat=75&calories=2100&protein=175&meal1=Oatmeal with Skimmed Milk, Walnut & Blueberries&meal2=Roast Chicken Salad Bowl with Mixed Greens & Sweet Potatoes&meal3=Grilled Salmon with Brown Rice & Broccoli
 @app.route('/mealmacros')
 def meal_macros():
-    auth = autobalance()
+    auth, used, quota = autobalance()
 
     carbs = request.args.get('carbs', type=int)
     protein = request.args.get('protein', type=int)
@@ -69,7 +74,24 @@ def meal_macros():
     meal2 = request.args.get('meal2', type=str)
     meal3 = request.args.get('meal3', type=str)
 
-    prompt = meal_plan_prompt(carbs, protein, fat, calories, meal1, meal2, meal3)
+    prompt = meal_detail_prompt(carbs, protein, fat, calories, meal1, meal2, meal3)
+
+    response = prompt_response(auth, prompt)
+
+    return response
+
+# localhost:8080/recipe?carbs=120&fat=25&calories=850&protein=75&dish=Roast Chicken Salad Bowl with Mixed Greens %26 Sweet Potatoes
+@app.route('/recipe')
+def recipe():
+    auth, used, quota = autobalance()
+
+    dish = request.args.get('dish', type=str)
+    carbs = request.args.get('carbs', type=int)
+    protein = request.args.get('protein', type=int)
+    fat = request.args.get('fat', type=int)
+    calories = request.args.get('calories', type=int)
+
+    prompt = meal_recipe_prompt(dish, carbs, fat, protein, calories)
 
     response = prompt_response(auth, prompt)
 
@@ -77,35 +99,16 @@ def meal_macros():
 
 @app.route('/ingredients')
 def ingredients():
-    auth = autobalance()
+    auth, used, quota = autobalance()
 
-    carbs = request.args.get('carbs', type=int)
-    protein = request.args.get('protein', type=int)
-    fat = request.args.get('fat', type=int)
-    calories = request.args.get('calories', type=int)
-    cost = request.args.get('cost', type=float)
+    recipe = request.args.get('recipe', type=str)
 
-    dish = request.args.get('dish', type=str)
-
-    prompt = meal_ingredients_prompt(dish, carbs, fat, protein, calories, cost)
+    prompt = meal_ingredients_prompt(recipe)
 
     response = prompt_response(auth, prompt)
 
     return response
 
-@app.route('/recipe')
-def recipe():
-    auth = autobalance()
-
-    ingredient_list = request.args.getlist('ingredient')
-    dish = request.args.get('dish', type=str)
-
-    prompt = meal_recipe_prompt(ingredient_list, dish)
-
-    response = prompt_response(auth, prompt)
-
-    return response
-    
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8080)
