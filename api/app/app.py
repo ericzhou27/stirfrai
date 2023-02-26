@@ -97,6 +97,7 @@ def recipe():
 
     return response
 
+# localhost:8080/recipe?recipe=<...recipe...>
 @app.route('/ingredients')
 def ingredients():
     auth, used, quota = autobalance()
