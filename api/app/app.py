@@ -52,7 +52,10 @@ def mealplan():
     fat = request.args.get('fat', type=int)
     calories = request.args.get('calories', type=int)
 
-    prompt = meal_plan_prompt(carbs, protein, fat, calories)
+    likes = request.args.getlist("like")
+    dislikes = request.args.getlist("dislike")
+
+    prompt = meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes)
 
     response = []
     for i in range(7):
