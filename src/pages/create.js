@@ -19,7 +19,7 @@ function Create() {
 
     const generateMealPlan = async () => {
         const macrosDoc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
-        macrosData = macrosDoc.data();
+        const macrosData = macrosDoc.data();
 
         const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}`;
 
