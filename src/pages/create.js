@@ -3,7 +3,7 @@ import '../App.css';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
 
@@ -18,7 +18,14 @@ function Create() {
     const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const generateMealPlan = async () => {
-        const url = "https://stirfrai.fly.dev/mealplan?carbs=30&protein=20&fat=10&calories=540&meal1=hot%20chocolate&meal2=hot%20chocolate&meal3=hot%20chocolate"
+        const macros_doc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
+        if (macros_doc.exists()) {
+            console.log("macros data", macros_doc.data());
+        } else {
+            console.log("no existing macros data");
+        }
+
+        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macros_doc.data().carbs}&protein=${macros_doc.data().protein}&fat=${macros_doc.data().fat}&calories=${macros_doc.data().calories}`;
 
         const resp = await axios.get(url)
             .then((resp) => {
