@@ -4,6 +4,9 @@ api/crfm-keys.env
 # Node build
 build/
 
+# Matthew's misc.
+workshop/
+
 # Logs
 logs
 *.log

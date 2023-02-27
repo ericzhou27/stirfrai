@@ -15,6 +15,8 @@ service = RemoteService("https://crfm-models.stanford.edu")
 def autobalance():
     min_used = float('inf')
     best_auth = None
+    total_usage = 0
+    total_quota = 0
     for key in api_keys:
         auth = Authentication(api_key=key)
 
@@ -24,4 +26,6 @@ def autobalance():
         if min_used >= used:
             min_used = used
             best_auth = auth
-    return best_auth
+        total_usage += used
+        total_quota += account.usages['gpt3']['total'].quota
+    return best_auth, total_usage, total_quota
