@@ -43,6 +43,9 @@ def macros():
     return response
 
 # localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&like=beef&like=lemon pepper&like=pork
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&dislike=chicken&dislike=tomato&dislike=peppers
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&dislike=chicken&dislike=tomato&dislike=peppers&like=beef&like=lemon pepper&like=pork
 @app.route('/mealplan')
 def mealplan():
     auth, used, quota = autobalance()
@@ -52,7 +55,10 @@ def mealplan():
     fat = request.args.get('fat', type=int)
     calories = request.args.get('calories', type=int)
 
-    prompt = meal_plan_prompt(carbs, protein, fat, calories)
+    likes = request.args.getlist("like")
+    dislikes = request.args.getlist("dislike")
+
+    prompt = meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes)
 
     response = []
     for i in range(7):
