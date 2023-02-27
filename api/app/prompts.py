@@ -14,7 +14,9 @@ model = 'openai/text-davinci-003'
 
 # thanks to chatgpt so I didn't have to write this myself lol
 def human_readable_list(list_of_strings):
-    if len(list_of_strings) == 1:
+    if len(list_of_strings) == 0:
+        return ''
+    elif len(list_of_strings) == 1:
         return list_of_strings[0]
     elif len(list_of_strings) == 2:
         return f"{list_of_strings[0]} and {list_of_strings[1]}"
@@ -43,15 +45,12 @@ def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
 
     likes_string = ''
     dislikes_string = ''
-    specificity = ''
     if len(likes):
-        likes_string = f'  I like {likes_list}.'
+        likes_string = f'  Occasionally include dishes with {likes_list}.'
     if len(dislikes):
-        dislikes_string = f'  I like {dislikes_list}.'
+        dislikes_string = f'  Do not include dishes that use {dislikes_list}.'
 
-    likes_string = human_readable_list(likes)
-    dislikes_string = human_readable_list(dislikes)
-    return f'''I need {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.  Give me names of dishes for breakfast, lunch, and dinner.{likes_string}{dislikes_string}  Try to include things I like and avoid things I don't like.  Each dish should have protein and carbs.  Altogether, these meals should satisfy these carbs, protein, fat, and calories requirements.  The nutrients should be balanced across all 3 meals.  Provide them in JSON format of a list of strings where the strings are dish names, and no other information.  There should only be three list items.  After providing the JSON, print ENDMEALPLAN.'''
+    return f'''I need {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.  Give me names of dishes for breakfast, lunch, and dinner.{likes_string}{dislikes_string}  Each dish should have protein and carbs.  Altogether, these meals should satisfy these carbs, protein, fat, and calories requirements.  The nutrients should be balanced across all 3 meals.  Provide them in JSON format of a list of strings where the strings are dish names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON.  Do not include newlines or other invalid characters.  After providing the JSON, print ENDMEALPLAN.'''
 
 def meal_detail_prompt(carbs, protein, fat, calories, meal1, meal2, meal3):
     return f'''My list of meals is as follows:
