@@ -1,15 +1,22 @@
 .App {
-  height: 100vh;
+  /* height: 100vh;
   width: 100vw;
   display: flex;
   flex: 1;
   justify-content: center;
   align-items: center;
-  background: #e0e0e0;
+  background: #e0e0e0; */
+  /* padding: 30; */
 }
 
 .container {
-  width: min(80vw, 80vh);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex: 5;
+  align-items: center;
+  padding: 30;
+  /* width: min(80vw, 80vh);
   height: min(80vw, 80vh);
   border-radius: 50px;
   background: #e0e0e0;
@@ -18,13 +25,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: box-shadow 200ms;
+  transition: box-shadow 200ms; */
 }
 
-.container:hover {
+/* .container:hover {
   box-shadow: 20px 20px 60px #ffffff,
     -20px -20px 60px #bebebe;
-}
+} */
 
 .googleSignIn {
   width: 25%;
@@ -36,4 +43,12 @@ p {
   font-family: "lato";
   font-size: 2em;
   font-weight: 300;
+}
+
+.title {
+  padding: 30;
+}
+
+.toolbar {
+  position: fixed;
 }

@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { auth, db } from "../constants/firebaseConfig"
+import React, { useEffect } from 'react';
+import { auth } from "../constants/firebaseConfig"
+import Button from '@mui/material/Button';
 import '../App.css';
+import { useHistory } from "react-router-dom";
 
 function logout() {
     console.log("LOGGING OUT")
@@ -15,6 +17,8 @@ function logout() {
 
 
 function Home() {
+    const history = useHistory();
+
     useEffect(() => {
         // 
     })
@@ -22,8 +26,9 @@ function Home() {
 
     return (
         <div className="App">
-            <div onClick={logout} className="container">
-                <p>Sign Out</p>
+            <div className="container">
+                <Button variant="contained" style={{margin: 30}}><a href="/create">Create a new meal plan</a></Button>
+                <Button variant="contained"><a href="/profile">Create/edit your profile</a></Button>
             </div>
         </div>
     )
