@@ -27,12 +27,9 @@ function Profile() {
     useEffect(() => {
         async function fetchProfile() {
             auth.onAuthStateChanged(async (authUser) => {
-                const profile_doc = await getDoc(doc(db, 'users', authUser.email));
-                if (profile_doc.exists()) {
-                    console.log("profile data", profile_doc.data());
-                    setProfile(profile_doc.data());
-                } else {
-                    console.log("no existing profile data");
+                const profileDoc = await getDoc(doc(db, 'users', authUser.email));
+                if (profileDoc.exists()) {
+                    setProfile(profileDoc.data());
                 }
             });
         }
@@ -44,12 +41,9 @@ function Profile() {
         async function fetchMacros() {
             auth.onAuthStateChanged(async (authUser) => {
 
-                const macros_doc = await getDoc(doc(db, 'users', authUser.email, 'macros', 'values'));
-                if (macros_doc.exists()) {
-                    console.log("macros data", macros_doc.data());
-                    setMacros(macros_doc.data());
-                } else {
-                    console.log("no existing macros data");
+                const macrosDoc = await getDoc(doc(db, 'users', authUser.email, 'macros', 'values'));
+                if (macrosDoc.exists()) {
+                    setMacros(macrosDoc.data());
                 }
             })
         }

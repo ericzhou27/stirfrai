@@ -18,14 +18,10 @@ function Create() {
     const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const generateMealPlan = async () => {
-        const macros_doc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
-        if (macros_doc.exists()) {
-            console.log("macros data", macros_doc.data());
-        } else {
-            console.log("no existing macros data");
-        }
+        const macrosDoc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
+        macrosData = macrosDoc.data();
 
-        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macros_doc.data().carbs}&protein=${macros_doc.data().protein}&fat=${macros_doc.data().fat}&calories=${macros_doc.data().calories}`;
+        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}`;
 
         const resp = await axios.get(url)
             .then((resp) => {
