@@ -43,6 +43,9 @@ def macros():
     return response
 
 # localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&like=beef&like=lemon pepper&like=pork
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&dislike=chicken&dislike=tomato&dislike=peppers
+# localhost:8080/mealplan?carbs=340&fat=75&calories=2100&protein=175&dislike=chicken&dislike=tomato&dislike=peppers&like=beef&like=lemon pepper&like=pork
 @app.route('/mealplan')
 def mealplan():
     auth, used, quota = autobalance()
