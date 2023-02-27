@@ -45,9 +45,9 @@ def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
 
     likes_string = ''
     dislikes_string = ''
-    if len(likes):
+    if likes:
         likes_string = f'  Occasionally include dishes with {likes_list}.'
-    if len(dislikes):
+    if dislikes:
         dislikes_string = f'  Do not include dishes that use {dislikes_list}.'
 
     return f'''I need {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.  Give me names of dishes for breakfast, lunch, and dinner.{likes_string}{dislikes_string}  Each dish should have protein and carbs.  Altogether, these meals should satisfy these carbs, protein, fat, and calories requirements.  The nutrients should be balanced across all 3 meals.  Provide them in JSON format of a list of strings where the strings are dish names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON.  Do not include newlines or other invalid characters.  After providing the JSON, print ENDMEALPLAN.'''
