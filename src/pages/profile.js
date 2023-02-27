@@ -5,10 +5,9 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { addDoc, doc, setDoc, collection, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
-
-import { useHistory } from "react-router-dom";
+import axios from 'axios';
 
 function Profile() {
     const [profile, setProfile] = useState({
@@ -24,8 +23,6 @@ function Profile() {
         fat: 0,
         calories: 0,
     })
-
-    const history = useHistory();
 
     useEffect(() => {
         async function fetchProfile() {
@@ -65,32 +62,23 @@ function Profile() {
 
         const url = `https://stirfrai.fly.dev/macros?height=${profile.height_ft}'${profile.height_in}"&weight=${profile.weight}%20lbs&goal=${profile.goals}`
 
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            }
-        }).then((data) => {
-            console.log("successfully queried macros api");
-            return data;
+        const resp = await axios.get(url)
+        .then((resp) => {
+            console.log("queried for profile data", resp.data);
+            return resp.data;
         })
-
-        const json_response = await response.json().then((value) => {
-            return value;
-        });
+        .catch((error) => console.log("received error when querying for profile data", error));
 
         await setDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'), {
-            carbs: json_response.carbs,
-            protein: json_response.protein,
-            fat: json_response.fat,
-            calories: json_response.calories
+            carbs: resp.carbs,
+            protein: resp.protein,
+            fat: resp.fat,
+            calories: resp.calories
         }).then(() => {
             console.log("finished adding macros data");
         });
 
-        console.log('HEREE', json_response)
-        setMacros(json_response);
+        setMacros(resp);
 
         await setDoc(doc(db, 'users', auth.currentUser.email), {
             height_ft: parseInt(profile.height_ft),
@@ -99,7 +87,6 @@ function Profile() {
             goals: profile.goals,
         }).then(() => {
             console.log("saved profile data");
-            // history.push("/home");
         })
     }
 
@@ -113,7 +100,6 @@ function Profile() {
             calories: parseInt(macros.calories),
         }).then(() => {
             console.log("saved macros data");
-            // history.push("/home");
         })
 
     }

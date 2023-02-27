@@ -1,12 +1,8 @@
 import React from "react"
-import { auth, db } from "../constants/firebaseConfig"
-import { useHistory } from "react-router-dom";
+import { auth } from "../constants/firebaseConfig"
 import '../App.css';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import ButtonAppBar from "../components/AppBar";
-import Home from "./home";
-import { Outlet, Link } from "react-router-dom";
 
 function Landing() {
     const currentUser = auth.currentUser

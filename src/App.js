@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "./constants/firebaseConfig"
+import { auth } from "./constants/firebaseConfig"
 import Landing from "./pages/landing"
 import Home from "./pages/home"
 import Create from "./pages/create"

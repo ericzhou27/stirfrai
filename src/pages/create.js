@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { addDoc, doc, setDoc, collection, getDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
+import axios from 'axios';
 
 function Create() {
     const [preferences, setPreferences] = useState({
@@ -17,53 +18,23 @@ function Create() {
     const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const generateMealPlan = async () => {
-        // const url = "https://stirfrai.fly.dev/macros?height=6%27&weight=155%20lbs&goal=gain%20muscle"
-
         const url = "https://stirfrai.fly.dev/mealplan?carbs=30&protein=20&fat=10&calories=540&meal1=hot%20chocolate&meal2=hot%20chocolate&meal3=hot%20chocolate"
 
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            }
-        }).then((data) => {
-            console.log("successfully queried macros api");
-            return data;
-        })
+        const resp = await axios.get(url)
+            .then((resp) => {
+                console.log("queried for meal plans", resp.data);
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for meal plans", error));
 
-        // const json_response = await response.json().then((value) => {
-        //     return value;
-        // });
+        setMealPlan(resp);
 
-        const json_response = [["Oatmeal with banana, 3 scrambled eggs, and 2 slices of bacon", "Grilled chicken breast and steamed vegetables", "Whole grain pasta with ground beef and vegetables"],
-        ["Greek yogurt with fruit, peanut butter and celery sticks, and hard-boiled eggs", "Tuna sandwich on whole wheat bread and grapes", "Salmon with sweet potato and steamed broccoli"],
-        ["Scrambled eggs with bell pepper and spinach, banana, and toast with avocado", "Bean quesadilla and salad", "Turkey burger and sweet potato fries"],
-        ["Whole wheat pancakes with berries, cottage cheese and an orange", "Grilled shrimp and vegetable stir fry", "Salmon salad with couscous and almonds"],
-        ["Strawberry yogurt smoothie and an apple", "Grilled chicken and quinoa salad", "Roast beef sandwich and steamed carrots"],
-        ["Oatmeal with nuts and raisins, boiled egg, and cheese stick", "Taco salad with ground beef and avocado", "Tilapia with spinach and mushrooms"],
-        ["Egg white omelette with mushrooms, banana and toast with peanut butter", "Turkey breast and roasted potatoes", "Veggie wrap with hummus and salad"]];
-
-
-        setMealPlan(json_response);
-        console.log('json response', json_response);
-
-        // Unfortunately have to enumerate through all manually
-        await setDoc(doc(db, 'users', auth.currentUser.email, 'mealplans', 'values'), {
-            0: json_response[0],
-            1: json_response[1],
-            2: json_response[2],
-            3: json_response[3],
-            4: json_response[4],
-            5: json_response[5],
-            6: json_response[6],
-        }).then(() => {
+        await setDoc(doc(db, 'users', auth.currentUser.email, 'mealplans', 'values'),
+            Object.assign({}, ...resp.map((x, index) => ({ [index]: x })))
+        ).then(() => {
             console.log("saved mealplans data");
-            // history.push("/home");
         })
-
     }
-
 
     // Could consider doing a wizard experience (i.e. Typeform-esque)
     return (
@@ -75,7 +46,7 @@ function Create() {
                 <Button variant="contained" onClick={generateMealPlan}>Generate meal plan</Button>
 
                 {mealPlan.length ? (
-                    <div className="container" style={{padding: 30}}>
+                    <div className="container" style={{ padding: 30 }}>
                         <Typography variant="h4">Tada! Your next delicious meal plan!</Typography>
 
                         <table className="table table-striped table-bordered" style={{ padding: 30 }}>

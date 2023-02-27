@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,12 +7,16 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { useHistory } from "react-router-dom";
-import { auth, db } from "../constants/firebaseConfig"
-import { useState } from 'react'
+import { auth } from "../constants/firebaseConfig"
 
 export default function ButtonAppBar() {
   const [authState, setAuthState] = useState(null);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      setAuthState(auth.currentUser);
+    }
+  }, [authState])
 
   function login() {
     const currentUser = auth.currentUser
@@ -30,6 +34,7 @@ export default function ButtonAppBar() {
     } else {
       alert("Already logged in.")
       console.log(currentUser)
+      // setAuthState(currentUser)
     }
   }
 
@@ -59,7 +64,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <a href='/home'>stirfr.ai</a>
           </Typography>
-          {auth.currentUser ?
+          {authState ?
             <Button color="inherit" onClick={logout}>Logout</Button> :
 
             <Button color="inherit" onClick={login}>Login</Button>}
