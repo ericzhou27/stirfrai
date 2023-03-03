@@ -15,6 +15,7 @@ from prompts import (
     meal_ingredients_prompt,
     meal_recipe_prompt,
     meal_recipe_clean_prompt,
+    meal_modification_prompt
 )
 
 # localhost:8080
@@ -103,7 +104,7 @@ def recipe():
 
     return response
 
-# localhost:8080/recipe?recipe=<...recipe...>
+# localhost:8080/ingredients?recipe=<...recipe...>
 @app.route('/ingredients')
 def ingredients():
     auth, used, quota = autobalance()
@@ -113,6 +114,21 @@ def ingredients():
     prompt = meal_ingredients_prompt(recipe)
 
     response = prompt_response(auth, prompt)
+
+    return response
+
+# localhost:8080/mealreplacement?meal=Lemon Pepper Pork with Brown Rice&dislike=chicken&dislike=tomato&dislike=peppers&like=beef&like=lemon pepper&like=pork
+@app.route('/mealreplacement')
+def meal_replacement():
+    auth, used, quota = autobalance()
+
+    meal = request.args.get('meal', type=str)
+    likes = request.args.getlist("like")
+    dislikes = request.args.getlist("dislike")
+
+    prompt = meal_modification_prompt(meal, likes, dislikes)
+
+    response = prompt_response(auth, prompt, randomness=True)
 
     return response
 
