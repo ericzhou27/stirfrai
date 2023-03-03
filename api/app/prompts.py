@@ -76,3 +76,15 @@ def detailed_meal_macros_prompt(recipe):
     return f'''{recipe}
 Provide the fat, carbs, and protein (all in grams), as well as the calories, in this meal, based on the ingredients list.  Provide it in JSON format where each key is one of the requested elements.  Values should all be integers.  When that is completed, print ENDMEALPLAN.
     '''
+
+def meal_modification_prompt(meal, likes, dislikes):
+    likes_list = human_readable_list(likes)
+    dislikes_list = human_readable_list(dislikes)
+
+    likes_string = ''
+    dislikes_string = ''
+    if likes:
+        likes_string = f'  I like {likes_list}, but these are not requirements.'
+    if dislikes:
+        dislikes_string = f'  Do not include {dislikes_list}.'
+    return f'''I currently have the meal {meal}.  I don't want it, so provide the name of a totally different meal for me.{likes_string}{dislikes_string}  After providing the name, print ENDMEALPLAN.'''
