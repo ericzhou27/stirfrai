@@ -42,7 +42,7 @@ def macros_prompt(height, weight, goal):
     return f'''I'm {height} and {weight}.  I want to {goal}.  Give me approximate integer values for how much carbs, protein, fat, and calories per day I should be eating.  The carbs, protein, and fat should be in grams.  These values should be very carefully tailored to my height, weight, and goal.  Provide this in JSON format where there is a key-value pair for each value requested. All keys should be lowercase.  All values should be integers, not strings.  After providing the JSON, print ENDMEALPLAN.'''
 
 def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
-    likes_list = likes.join(', ')
+    likes_list = ', '.join(likes)
     dislikes_list = human_readable_list(dislikes)
 
     likes_string = ''
