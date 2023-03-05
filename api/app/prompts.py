@@ -13,7 +13,10 @@ from helm_auth import service
 model = 'openai/text-davinci-003'
 
 # thanks to chatgpt so I didn't have to write this myself lol
-def human_readable_list(list_of_strings):
+def human_readable_list(list_of_strings, and_or=False):
+    conjunction = 'and'
+    if and_or:
+        conjunction = 'and/or'
     if len(list_of_strings) == 0:
         return ''
     elif len(list_of_strings) == 1:
@@ -21,7 +24,7 @@ def human_readable_list(list_of_strings):
     elif len(list_of_strings) == 2:
         return f"{list_of_strings[0]} and {list_of_strings[1]}"
     else:
-        return f"{', '.join(list_of_strings[:-1])}, and {list_of_strings[-1]}"
+        return f"{', '.join(list_of_strings[:-1])}, {conjunction} {list_of_strings[-1]}"
 
 def prompt_response(auth, prompt, randomness=False):
     seed = ''
@@ -38,19 +41,18 @@ def prompt_response(auth, prompt, randomness=False):
 def macros_prompt(height, weight, goal):
     return f'''I'm {height} and {weight}.  I want to {goal}.  Give me approximate integer values for how much carbs, protein, fat, and calories per day I should be eating.  The carbs, protein, and fat should be in grams.  These values should be very carefully tailored to my height, weight, and goal.  Provide this in JSON format where there is a key-value pair for each value requested. All keys should be lowercase.  All values should be integers, not strings.  After providing the JSON, print ENDMEALPLAN.'''
 
-# calories per day.  I like lemon pepper, pork, and beef.  I dislike chicken, tomato, and peppers.  Give me names of dishes for breakfast, lunch, and dinner.  Try to include things I like and avoid things I don't like.  Each dish should have protein and carbs.  Altogether, these meals should satisfy these carbs, protein, fat, and calories requirements.  The nutrients should be balanced across all 3 meals.  Provide them in JSON format of a list of strings where the strings are dish names, and no other information.  There should only be three list items.  After providing the JSON, print ENDMEALPLAN.
 def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
-    likes_list = human_readable_list(likes)
+    likes_list = likes.join(', ')
     dislikes_list = human_readable_list(dislikes)
 
     likes_string = ''
     dislikes_string = ''
     if likes:
-        likes_string = f'  Occasionally include dishes with {likes_list}.'
+        likes_string = f'  Occasionally include meals that have some but not all of the following: {likes_list}.'
     if dislikes:
-        dislikes_string = f'  Do not include dishes that use {dislikes_list}.'
+        dislikes_string = f'  Do not include meals that use {dislikes_list}.'
 
-    return f'''I need {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.  Give me names of dishes for breakfast, lunch, and dinner.{likes_string}{dislikes_string}  Each dish should have protein and carbs.  Altogether, these meals should satisfy these carbs, protein, fat, and calories requirements.  The nutrients should be balanced across all 3 meals.  Provide them in JSON format of a list of strings where the strings are dish names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON.  Do not include newlines or other invalid characters.  After providing the JSON, print ENDMEALPLAN.'''
+    return f'''Provide semi-detailed meal names (not ingredient lists) for breakfast, lunch, and dinner, in that order.  Altogether, the meals need to provide {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.{likes_string}{dislikes_string}  Do not include meals with ingredients that don't go together.  The meals must be reasonable and taste good to the average American.  Provide them in valid JSON: a list of strings where the strings are meal names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON, including starting and ending brackets.  Do not include newlines or other invalid characters.  After the JSON concludes with a closing bracket, print ENDMEALPLAN.'''
 
 def meal_detail_prompt(carbs, protein, fat, calories, meal1, meal2, meal3):
     return f'''My list of meals is as follows:
