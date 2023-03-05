@@ -1,84 +1,133 @@
 import React, { useState } from 'react';
 import '../App.css';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Typography from '@mui/material/Typography';
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, addDoc, collection, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
+import { WithContext as ReactTags } from 'react-tag-input';
 
 function Create() {
+    const [loading, setLoading] = useState(false);
+
     const [preferences, setPreferences] = useState({
-        likes: '',
-        dislikes: '',
+        likes: [],
+        dislikes: [],
     });
 
-    const [mealPlan, setMealPlan] = useState([]);
+    const KeyCodes = {
+        comma: 188,
+        enter: 13
+    };
+    const delimiters = [KeyCodes.comma, KeyCodes.enter];
+    const MEAL_TYPES = ['BREAKFAST', 'LUNCH', 'DINNER'];
 
-    const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    // Keeping this for reference
+
+    // const generateRecipe = async (meal, ingredients) => {
+    //     const url = `https://stirfrai.fly.dev/recipe?dish=${meal}&ingredient=${ingredients}`;
+
+    //     const resp = await axios.get(url)
+    //         .then((resp) => {
+    //             console.log("queried for recipe", resp.data);
+    //             return resp.data;
+    //         })
+    //         .catch((error) => console.log("received error when generating recipe", error));
+
+    //     console.log("recipe", resp);
+    //     return resp;
+    // }
+
+    // const generateIngredients = async (meal, carbs, protein, fat, calories, cost) => {
+    //     const url = `https://stirfrai.fly.dev/ingredients?dish=${meal}&carbs=${carbs}&protein=${protein}&fat=${fat}&calories=${calories}&cost=${cost}`;
+
+    //     const resp = await axios.get(url)
+    //         .then((resp) => {
+    //             console.log("queried for ingredients", resp.data);
+    //             return resp.data;
+    //         })
+    //         .catch((error) => console.log("received error when generating ingredients", error));
+
+    //     console.log("ingredients", resp);
+    //     return resp;
+    // }
 
     const generateMealPlan = async () => {
+        setLoading(true);
         const macrosDoc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
         const macrosData = macrosDoc.data();
 
-        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}`;
+        const likesUrl = preferences.likes ? "&like=" + preferences.likes.map(x => x.text).join("&like=") : "";
+        const dislikesUrl = preferences.dislikes ? "&dislike=" + preferences.dislikes.map(x => x.text).join("&dislike=") : "";
 
-        const resp = await axios.get(url)
+        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}${likesUrl}${dislikesUrl}`;
+
+        const mealPlan = await axios.get(url)
             .then((resp) => {
                 console.log("queried for meal plans", resp.data);
                 return resp.data;
             })
             .catch((error) => console.log("received error when querying for meal plans", error));
 
-        setMealPlan(resp);
-
-        await setDoc(doc(db, 'users', auth.currentUser.email, 'mealplans', 'values'),
-            Object.assign({}, ...resp.map((x, index) => ({ [index]: x })))
-        ).then(() => {
+        await addDoc(collection(db, 'users', auth.currentUser.email, 'mealplans'), {
+            "timestamp": Timestamp.now(),
+            "values": mealPlan.map((day) => {
+                // Can't have nested arrays, so use dictionary for the individual meals
+                return Object.assign({}, ...day.map((meal, index) => ({
+                    [MEAL_TYPES[index]]: {
+                        name: meal,
+                        ingredients: [],
+                        recipe: ""
+                    }
+                })))
+            })
+        }).then(() => {
             console.log("saved mealplans data");
-        })
+            setLoading(false);
+        });
     }
+
+    const handleLikesAddition = (tag) => {
+        setPreferences({ ...preferences, likes: [...preferences.likes, tag] });
+    };
+
+    const handleDislikesAddition = (tag) => {
+        setPreferences({ ...preferences, dislikes: [...preferences.dislikes, tag] });
+    }
+
+    const handleLikesDelete = (i) => {
+        setPreferences({ ...preferences, likes: preferences.likes.filter((tag, index) => index !== i) });
+    };
+
+    const handleDislikesDelete = (i) => {
+        setPreferences({ ...preferences, dislikes: preferences.dislikes.filter((tag, index) => index !== i) });
+    };
 
     // Could consider doing a wizard experience (i.e. Typeform-esque)
     return (
         <div className="App">
             <div className="container">
                 <p>Create a new meal plan</p>
-                <TextField id="outlined-basic" label="What preferences do you have (i.e. types of protein, spices, veggies)?" variant="outlined" style={{ width: 600, margin: 30 }} multiline rows={2} onChange={(val) => setPreferences({ ...preferences, likes: val.target.value })} />
-                <TextField id="outlined-basic" label="What do you not want to see in your recipes (i.e. ingredients, cooking methods)?" variant="outlined" style={{ width: 600, margin: 30 }} multiline rows={2} onChange={(val) => setPreferences({ ...preferences, dislikes: val.target.value })} />
-                <Button variant="contained" onClick={generateMealPlan}>Generate meal plan</Button>
-
-                {mealPlan.length ? (
-                    <div className="container" style={{ padding: 30 }}>
-                        <Typography variant="h4">Tada! Your next delicious meal plan!</Typography>
-
-                        <table className="table table-striped table-bordered" style={{ padding: 30 }}>
-                            <thead>
-                                <tr>
-                                    {/* Shift headers over by one column */}
-                                    <th></th>
-                                    <th>Breakfast</th>
-                                    <th>Lunch</th>
-                                    <th>Dinner</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {mealPlan && mealPlan.map((meal, index) =>
-
-                                    <tr key={index}>
-                                        <th>{DAYS_OF_WEEK[index]}</th>
-                                        <td>{meal[0]}</td>
-                                        <td>{meal[1]}</td>
-                                        <td>{meal[2]}</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : <div></div>}
+                <Typography variant="body1" style={{ padding: 20 }}>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
+                <ReactTags
+                    tags={preferences.likes}
+                    delimiters={delimiters}
+                    handleDelete={handleLikesDelete}
+                    handleAddition={handleLikesAddition}
+                    inputFieldPosition="bottom"
+                    autocomplete
+                />
+                <Typography variant="body1" style={{ padding: 20 }}>What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
+                <ReactTags
+                    tags={preferences.dislikes}
+                    delimiters={delimiters}
+                    handleDelete={handleDislikesDelete}
+                    handleAddition={handleDislikesAddition}
+                    inputFieldPosition="bottom"
+                    autocomplete
+                />
+                <LoadingButton loading={loading} variant="contained" style={{ margin: 30 }} onClick={generateMealPlan}>Generate meal plan</LoadingButton>
             </div>
-
-
         </div>
     )
 }
