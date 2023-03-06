@@ -54,7 +54,7 @@ function Create() {
 
     const generateMealPlan = async () => {
         setLoading(true);
-        const macrosDoc = await getDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'));
+        const macrosDoc = await getDoc(doc(db, 'users', auth.currentUser.uid, 'macros', 'values'));
         const macrosData = macrosDoc.data();
 
         const likesUrl = preferences.likes ? "&like=" + preferences.likes.map(x => x.text).join("&like=") : "";
@@ -69,7 +69,7 @@ function Create() {
             })
             .catch((error) => console.log("received error when querying for meal plans", error));
 
-        await addDoc(collection(db, 'users', auth.currentUser.email, 'mealplans'), {
+        await addDoc(collection(db, 'users', auth.currentUser.uid, 'mealplans'), {
             "timestamp": Timestamp.now(),
             "values": mealPlan.map((day) => {
                 // Can't have nested arrays, so use dictionary for the individual meals
