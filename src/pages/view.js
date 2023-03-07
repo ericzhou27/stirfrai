@@ -11,8 +11,58 @@ function useQuery() {
     return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
-function MealPlan(mealPlan) {
-    return <p style={{ color: 'black' }}>Meal Plan</p>
+function Meal(props) {
+    const recipe = props.meal.recipe
+    const ingredients = props.meal.ingredients
+    const name = props.meal.name
+
+    console.log(recipe, ingredients, name)
+
+    return (
+        <p className='mealContents'>{name}</p>
+    )
+}
+
+function Day(props) {
+    const breakfast = props.day.BREAKFAST
+    const lunch = props.day.LUNCH
+    const dinner = props.day.DINNER
+    const dayDict = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+    return (
+        <div className='dayContainer'>
+            <div className='dayContainerTitle'>{dayDict[props.index]}</div>
+            <div className='mealContainer'>
+                <p className='mealTitle'>Breakfast</p>
+                <div className='divider' />
+                <Meal meal={breakfast} />
+            </div>
+            <div className='mealContainer'>
+                <p className='mealTitle'>Lunch</p>
+                <div className='divider' />
+                <Meal meal={lunch} />
+            </div>
+            <div className='mealContainer'>
+                <p className='mealTitle'>Dinner</p>
+                <div className='divider' />
+                <Meal meal={dinner} />
+            </div>
+        </div>
+    )
+}
+
+function MealPlan(props) {
+    const days = props.mealPlan.values
+    console.log("DATA - ", props.mealPlan, days)
+    return (
+        days.map((day, index) => {
+            return (
+                <div className='mealPlanSection'>
+                    <Day day={day} index={index} />
+                </div>
+            )
+        })
+    )
 }
 
 function View() {
@@ -52,6 +102,7 @@ function View() {
         : validId ?
             (
                 <div className="container">
+                    <p className="mealPlanTitle">{mealPlan.id}</p>
                     <MealPlan mealPlan={mealPlan} />
                 </div>
             ) :
