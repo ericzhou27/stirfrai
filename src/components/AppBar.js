@@ -37,21 +37,13 @@ export default function ButtonAppBar(props) {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box >
       <AppBar position="static">
         <Toolbar>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <p href='/home'>stirfr.ai</p>
+            <a href='/home'>stirfr.ai</a>
           </Typography>
+          <Button ><a href="/profile">Profile</a></Button>
           {props.loggedIn ?
             <Button color="inherit" onClick={logout}>Logout</Button> :
             <Button color="inherit" onClick={login}>Login</Button>}

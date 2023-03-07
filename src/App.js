@@ -28,7 +28,7 @@ function App() {
   if (loggedIn) {
     return (
       <Router>
-        <div>
+        <div className='AppContainer'>
           <Switch>
             <Route path="/profile">
               <ButtonAppBar loggedIn={loggedIn} />

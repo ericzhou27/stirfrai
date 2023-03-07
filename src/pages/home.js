@@ -1,37 +1,50 @@
-import React, { useEffect } from 'react';
-import { auth } from "../constants/firebaseConfig"
-import Button from '@mui/material/Button';
-import '../App.css';
+import React, { useEffect, useState } from 'react';
+import { auth, db } from "../constants/firebaseConfig"
+import { Pinwheel } from '@uiball/loaders'
 import { useHistory } from "react-router-dom";
-
-function logout() {
-    console.log("LOGGING OUT")
-    auth.signOut().then(() => {
-        console.log("SUCCESS")
-        // Sign-out successful.
-    }).catch((error) => {
-        console.log("FAILURE - ", error)
-        // An error happened.
-    });
-}
-
+import { collection, getDocs } from "firebase/firestore";
+import '../App.css';
 
 function Home() {
-    const history = useHistory();
+    const [mealPlans, setMealPlans] = useState([]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        // 
-    })
+        async function fetchMealPlans() {
+            auth.onAuthStateChanged(async (authUser) => {
+                const mealPlanCollection = collection(db, 'users', authUser.uid, 'mealplans')
+                const querySnapshot = await getDocs(mealPlanCollection);
+                let mealPlansTemp = []
+                querySnapshot.forEach((doc) => {
+                    mealPlansTemp.push({ id: doc.id, ...doc.data() })
+                });
+                console.log(mealPlansTemp)
+                setMealPlans(mealPlansTemp)
+                setLoading(false)
+            });
+        }
+
+        fetchMealPlans()
+    }, [])
 
 
-    return (
-        <div className="App">
+    return loading ?
+        (<div className="loadingContainer">
+            <Pinwheel size={35} color="#231F20" />
+        </div>)
+        : (
             <div className="container">
-                <Button variant="contained" style={{margin: 30}}><a href="/create">Create a new meal plan</a></Button>
-                <Button variant="contained"><a href="/profile">Create/edit your profile</a></Button>
+                {mealPlans.map((mealPlan) => {
+                    return (
+                        <div className="mealPlanContainer">
+                            <p>{mealPlan.id}</p>
+                        </div>
+                    )
+                })}
+                <div className="button"><a href="/create" >Create</a></div>
             </div>
-        </div>
-    )
+        )
 }
 
 export default Home
