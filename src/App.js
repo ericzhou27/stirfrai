@@ -11,6 +11,7 @@ import Landing from "./pages/landing"
 import Home from "./pages/home"
 import Create from "./pages/create"
 import Profile from "./pages/profile"
+import View from "./pages/view"
 
 import './App.css';
 import ButtonAppBar from './components/AppBar';
@@ -23,26 +24,30 @@ function App() {
       setLoggedIn(!!user)
     });
   })
-  // if (true) {
+
   if (loggedIn) {
     return (
       <Router>
-        <div>
+        <div className='AppContainer'>
           <Switch>
-          <Route path="/profile">
-              <ButtonAppBar />
+            <Route path="/profile">
+              <ButtonAppBar loggedIn={loggedIn} />
               <Profile />
             </Route>
             <Route path="/create">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Create />
             </Route>
+            <Route path="/view">
+              <ButtonAppBar loggedIn={loggedIn} />
+              <View />
+            </Route>
             <Route path="/home">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Home />
             </Route>
             <Route path="/">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Landing />
             </Route>
           </Switch>
@@ -55,7 +60,7 @@ function App() {
         <div>
           <Switch>
             <Route path="/">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Landing />
             </Route>
           </Switch>

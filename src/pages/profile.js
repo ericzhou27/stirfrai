@@ -6,6 +6,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
+import { Pinwheel } from '@uiball/loaders'
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
@@ -25,9 +26,9 @@ function Profile() {
         calories: 0,
     });
 
+    const [loading, setLoading] = useState(true);
     const [profileLoading, setProfileLoading] = useState(false);
     const [macrosLoading, setMacrosLoading] = useState(false);
-
     const [successAlert, setSuccessAlert] = useState(false);
 
     useEffect(() => {
@@ -50,6 +51,7 @@ function Profile() {
                 const macrosDoc = await getDoc(doc(db, 'users', authUser.uid, 'macros', 'values'));
                 if (macrosDoc.exists()) {
                     setMacros(macrosDoc.data());
+                    setLoading(false)
                 }
             })
         }
@@ -111,8 +113,11 @@ function Profile() {
         setSuccessAlert(true);
     }
 
-    return (
-        <div className="App">
+    return loading ?
+        (<div className="loadingContainer">
+            <Pinwheel size={35} color="#231F20" />
+        </div>) :
+        (
             <div className="container">
                 <p>Profile</p>
                 <Box
@@ -153,8 +158,7 @@ function Profile() {
                     </div>
                 </Box>
             </div>
-        </div>
-    )
+        )
 }
 
 export default Profile

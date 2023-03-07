@@ -9,15 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../constants/firebaseConfig"
 
-export default function ButtonAppBar() {
-  const [authState, setAuthState] = useState(null);
-
-  useEffect(() => {
-    if (auth.currentUser) {
-      setAuthState(auth.currentUser);
-    }
-  }, [authState])
-
+export default function ButtonAppBar(props) {
   function login() {
     const currentUser = auth.currentUser
     const provider = new GoogleAuthProvider();
@@ -26,22 +18,18 @@ export default function ButtonAppBar() {
         .then((result) => {
           const user = result.user;
           console.log(user)
-          setAuthState(user);
-          // TODO - re-route to /home
         }).catch((error) => {
           console.log("ERROR - ", error)
         });
     } else {
       alert("Already logged in.")
-      console.log(currentUser)
-      // setAuthState(currentUser)
     }
   }
 
   function logout() {
+    console.log(auth.currentUser)
     auth.signOut()
       .then(function () {
-        setAuthState(null);
         console.log('Signout Succesfull')
       }, function (error) {
         console.log('Signout Failed')
@@ -49,24 +37,15 @@ export default function ButtonAppBar() {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+    <Box >
+      <AppBar position="static" style={{ background: '#000' }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <a href='/home'>stirfr.ai</a>
           </Typography>
-          {authState ?
+          <Button ><a href="/profile">Profile</a></Button>
+          {props.loggedIn ?
             <Button color="inherit" onClick={logout}>Logout</Button> :
-
             <Button color="inherit" onClick={login}>Login</Button>}
         </Toolbar>
       </AppBar>

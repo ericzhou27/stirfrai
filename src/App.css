@@ -1,48 +1,51 @@
-.App {
-  /* height: 100vh;
-  width: 100vw;
+body::-webkit-scrollbar {
+  display: none;
+}
+
+
+.AppContainer {
+  min-height: 100vh;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.loadingContainer {
+  height: 100%;
   display: flex;
   flex: 1;
   justify-content: center;
   align-items: center;
-  background: #e0e0e0; */
-  /* padding: 30; */
 }
 
 .container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
   flex: 5;
   align-items: center;
-  padding: 30;
-  /* width: min(80vw, 80vh);
-  height: min(80vw, 80vh);
-  border-radius: 50px;
-  background: #e0e0e0;
-  box-shadow: 20px 20px 60px #bebebe,
-    -20px -20px 60px #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: box-shadow 200ms; */
+  padding: 0px 0px 20px 0px;
+  /* border: 1px solid red; */
 }
-
-/* .container:hover {
-  box-shadow: 20px 20px 60px #ffffff,
-    -20px -20px 60px #bebebe;
-} */
 
 .googleSignIn {
   width: 25%;
-  filter: drop-shadow(8px 8px 5px #bebebe) 
-          drop-shadow(-8px -8px 5px #fff)
+  filter: drop-shadow(8px 8px 5px #bebebe) drop-shadow(-8px -8px 5px #fff)
+}
+
+a {
+  font-family: "lato";
+  font-size: 1em;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
 }
 
 p {
   font-family: "lato";
-  font-size: 2em;
+  font-size: 1em;
   font-weight: 300;
+  color: white;
 }
 
 .title {
@@ -51,4 +54,115 @@ p {
 
 .toolbar {
   position: fixed;
+}
+
+.mealPlanContainer {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  width: 90%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px 0px 0px;
+}
+
+.button {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  width: 90%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0px 0px 0px;
+}
+
+.button:hover,
+.mealPlanContainer:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.mealPlanTitle {
+  font-family: "lato";
+  font-size: 2em;
+  font-weight: 600;
+  color: black;
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+}
+
+.mealPlanSection {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  width: 90%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0px 0px 0px;
+}
+
+.dayContainer {
+  width: 100%;
+}
+
+.dayContainerTitle {
+  padding: 5px;
+  margin-bottom: 5px;
+  font-family: "lato";
+  font-size: 1.5em;
+  font-weight: 600;
+  color: white;
+
+}
+
+.mealContainer {
+  border-radius: 5px;
+  color: white;
+  padding: 10px 5px;
+  /* border: 1px solid green; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.mealContainer:hover {
+  opacity: 0.9;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.mealTitle {
+  font-family: "lato";
+  font-size: 1em;
+  font-weight: 300;
+  color: white;
+  /* border: 1px solid red; */
+  width: 20%;
+  margin: 0px;
+}
+
+.divider {
+  /* border: 0.25px solid white; */
+  width: 0.5px;
+  background-color: white;
+  height: 2em;
+  margin-right: 8%;
+}
+
+.mealContents {
+  font-family: "lato";
+  font-size: 1em;
+  font-weight: 300;
+  color: white;
+  width: 80%;
+  margin: 0px;
+  /* text-align: right; */
+
+  /* border: 1px solid blue; */
+
 }
