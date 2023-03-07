@@ -47,7 +47,9 @@ function Home() {
                         </div>
                     )
                 })}
-                <div className="button"><a href="/create" >Create</a></div>
+                <div className="button" onClick={() => {
+                    history.push(`/create`)
+                }}><p style={{ margin: 0 }}>Create</p></div>
             </div>
         )
 }
