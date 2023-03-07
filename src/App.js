@@ -31,23 +31,23 @@ function App() {
         <div>
           <Switch>
             <Route path="/profile">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Profile />
             </Route>
             <Route path="/create">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Create />
             </Route>
             <Route path="/view">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <View />
             </Route>
             <Route path="/home">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Home />
             </Route>
             <Route path="/">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Landing />
             </Route>
           </Switch>
@@ -60,7 +60,7 @@ function App() {
         <div>
           <Switch>
             <Route path="/">
-              <ButtonAppBar />
+              <ButtonAppBar loggedIn={loggedIn} />
               <Landing />
             </Route>
           </Switch>
