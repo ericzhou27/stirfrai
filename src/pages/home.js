@@ -8,7 +8,7 @@ import '../App.css';
 function Home() {
     const [mealPlans, setMealPlans] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const history = useHistory()
 
     useEffect(() => {
         async function fetchMealPlans() {
@@ -37,7 +37,12 @@ function Home() {
             <div className="container">
                 {mealPlans.map((mealPlan) => {
                     return (
-                        <div className="mealPlanContainer">
+                        <div
+                            key={mealPlan.id}
+                            onClick={() => {
+                                history.push(`/view?id=${mealPlan.id}`)
+                            }}
+                            className="mealPlanContainer">
                             <p>{mealPlan.id}</p>
                         </div>
                     )
