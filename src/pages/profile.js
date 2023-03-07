@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import '../App.css';
 import TextField from '@mui/material/TextField';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
@@ -22,12 +23,17 @@ function Profile() {
         protein: 0,
         fat: 0,
         calories: 0,
-    })
+    });
+
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [macrosLoading, setMacrosLoading] = useState(false);
+
+    const [successAlert, setSuccessAlert] = useState(false);
 
     useEffect(() => {
         async function fetchProfile() {
             auth.onAuthStateChanged(async (authUser) => {
-                const profileDoc = await getDoc(doc(db, 'users', authUser.email));
+                const profileDoc = await getDoc(doc(db, 'users', authUser.uid));
                 if (profileDoc.exists()) {
                     setProfile(profileDoc.data());
                 }
@@ -41,7 +47,7 @@ function Profile() {
         async function fetchMacros() {
             auth.onAuthStateChanged(async (authUser) => {
 
-                const macrosDoc = await getDoc(doc(db, 'users', authUser.email, 'macros', 'values'));
+                const macrosDoc = await getDoc(doc(db, 'users', authUser.uid, 'macros', 'values'));
                 if (macrosDoc.exists()) {
                     setMacros(macrosDoc.data());
                 }
@@ -53,17 +59,18 @@ function Profile() {
 
     const saveProfileDetails = async () => {
         console.log(profile);
+        setProfileLoading(true);
 
         const url = `https://stirfrai.fly.dev/macros?height=${profile.height_ft}'${profile.height_in}"&weight=${profile.weight}%20lbs&goal=${profile.goals}`
 
         const resp = await axios.get(url)
-        .then((resp) => {
-            console.log("queried for profile data", resp.data);
-            return resp.data;
-        })
-        .catch((error) => console.log("received error when querying for profile data", error));
+            .then((resp) => {
+                console.log("queried for profile data", resp.data);
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for profile data", error));
 
-        await setDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'), {
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'macros', 'values'), {
             carbs: resp.carbs,
             protein: resp.protein,
             fat: resp.fat,
@@ -74,7 +81,7 @@ function Profile() {
 
         setMacros(resp);
 
-        await setDoc(doc(db, 'users', auth.currentUser.email), {
+        await setDoc(doc(db, 'users', auth.currentUser.uid), {
             height_ft: parseInt(profile.height_ft),
             height_in: parseInt(profile.height_in),
             weight: parseInt(profile.weight),
@@ -82,12 +89,16 @@ function Profile() {
         }).then(() => {
             console.log("saved profile data");
         })
+
+        setProfileLoading(false);
+        setSuccessAlert(true);
     }
 
     const saveMacros = async () => {
         console.log(macros);
+        setMacrosLoading(true);
 
-        await setDoc(doc(db, 'users', auth.currentUser.email, 'macros', 'values'), {
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'macros', 'values'), {
             carbs: parseInt(macros.carbs),
             protein: parseInt(macros.protein),
             fat: parseInt(macros.fat),
@@ -96,6 +107,8 @@ function Profile() {
             console.log("saved macros data");
         })
 
+        setMacrosLoading(false);
+        setSuccessAlert(true);
     }
 
     return (
@@ -117,7 +130,7 @@ function Profile() {
                         </div>
                         <TextField id="outlined-basic" label="Weight (in lbs)" variant="outlined" type="number" value={profile.weight} onChange={(val) => setProfile({ ...profile, weight: val.target.value })} />
                         <TextField id="outlined-basic" label="Goals (i.e. lose weight, gain muscle)" variant="outlined" multiline style={{ width: 400 }} rows={2} value={profile.goals} InputLabelProps={{ shrink: true }} onChange={(val) => setProfile({ ...profile, goals: val.target.value })} />
-                        <Button variant="contained" onClick={saveProfileDetails}>Save Profile</Button>
+                        <LoadingButton loading={profileLoading} variant="contained" onClick={saveProfileDetails}>Save Profile</LoadingButton>
                         {macros.carbs === 0 && macros.protein === 0 && macros.fat === 0 && macros.calories === 0 ?
                             <Typography variant="h4" style={{ padding: 20 }}>Add your profile details to view your estimated macros!</Typography>
                             : (
@@ -127,11 +140,16 @@ function Profile() {
                                     <TextField id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
                                     <TextField id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
                                     <TextField id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
-                                    <Button variant="contained" onClick={saveMacros}>Save Macros</Button>
-
+                                    <LoadingButton loading={macrosLoading} variant="contained" onClick={saveMacros}>Save Macros</LoadingButton>
                                 </div>
                             )
                         }
+                        <Snackbar
+                            open={successAlert}
+                            autoHideDuration={2000}
+                            onClose={() => setSuccessAlert(false)}
+                            message="Successfully saved!"
+                        />
                     </div>
                 </Box>
             </div>
