@@ -54,6 +54,7 @@ function Profile() {
                 }
                 setLoading(false)
             })
+            
         }
 
         fetchMacros();

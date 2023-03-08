@@ -5,8 +5,9 @@ import {
   Route,
 } from "react-router-dom";
 
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./constants/firebaseConfig"
+import { auth, db } from "./constants/firebaseConfig"
 import Landing from "./pages/landing"
 import Home from "./pages/home"
 import Create from "./pages/create"
@@ -18,14 +19,30 @@ import ButtonAppBar from './components/AppBar';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(true);
+  const [setUp, setSetUp] = useState(true);
+
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setLoggedIn(!!user)
-    });
-  })
+    function fetchUserSetUp() {
+      auth.onAuthStateChanged(async (user) => {
+        if (!!user) {
+          const docRef = doc(db, 'users', user.uid)
+          const userDoc = await getDoc(docRef);
 
-  if (loggedIn) {
+          setLoggedIn(!!user)
+          setSetUp(userDoc.exists())
+        } else {
+          setLoggedIn(false)
+          setSetUp(false)
+        }
+
+      });
+    }
+
+    fetchUserSetUp();
+  }, [])
+
+  if (loggedIn && setUp) {
     return (
       <Router>
         <div className='AppContainer'>
@@ -49,6 +66,19 @@ function App() {
             <Route path="/">
               <ButtonAppBar loggedIn={loggedIn} />
               <Landing />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
+  } else if (loggedIn && !setUp) {
+    return (
+      <Router>
+        <div className='AppContainer'>
+          <Switch>
+            <Route path="/">
+              <ButtonAppBar loggedIn={loggedIn} />
+              <Profile />
             </Route>
           </Switch>
         </div>
