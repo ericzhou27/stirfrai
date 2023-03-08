@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { doc, addDoc, collection, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { useHistory } from "react-router-dom";
+import ScrollIntoView from 'react-scroll-into-view'
 
 import '../styles/react_tags.css'
 
@@ -19,42 +21,17 @@ function Create() {
         dislikes: [],
     });
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        document.body.style.overflow = "hidden";
+    }, [])
+
     const KeyCodes = {
         comma: 188,
         enter: 13
     };
     const delimiters = [KeyCodes.comma, KeyCodes.enter];
     const MEAL_TYPES = ['BREAKFAST', 'LUNCH', 'DINNER'];
-
-    // Keeping this for reference
-
-    // const generateRecipe = async (meal, ingredients) => {
-    //     const url = `https://stirfrai.fly.dev/recipe?dish=${meal}&ingredient=${ingredients}`;
-
-    //     const resp = await axios.get(url)
-    //         .then((resp) => {
-    //             console.log("queried for recipe", resp.data);
-    //             return resp.data;
-    //         })
-    //         .catch((error) => console.log("received error when generating recipe", error));
-
-    //     console.log("recipe", resp);
-    //     return resp;
-    // }
-
-    // const generateIngredients = async (meal, carbs, protein, fat, calories, cost) => {
-    //     const url = `https://stirfrai.fly.dev/ingredients?dish=${meal}&carbs=${carbs}&protein=${protein}&fat=${fat}&calories=${calories}&cost=${cost}`;
-
-    //     const resp = await axios.get(url)
-    //         .then((resp) => {
-    //             console.log("queried for ingredients", resp.data);
-    //             return resp.data;
-    //         })
-    //         .catch((error) => console.log("received error when generating ingredients", error));
-
-    //     console.log("ingredients", resp);
-    //     return resp;
-    // }
 
     const generateMealPlan = async () => {
         setLoading(true);
@@ -97,6 +74,44 @@ function Create() {
         history.push(`/view?id=${id}`);
     }
 
+    function Preferences() {
+        // 
+        return (
+            <div id="preferences" style={{ height: "100vh", padding: "20%" }}>
+                <Typography variant="body1" className='mealPlanPreferenceQuestions'>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
+                <ReactTags
+                    tags={preferences.likes}
+                    delimiters={delimiters}
+                    handleDelete={handleLikesDelete}
+                    handleAddition={handleLikesAddition}
+                    inputFieldPosition="bottom"
+                />
+                <ScrollIntoView selector={"#dislikes"} style={{ padding: 15 }}>
+                    <Button variant="contained">Next</Button>
+                </ScrollIntoView>
+            </div>
+        )
+    }
+
+    function Dislikes() {
+        return (
+            <div id="dislikes" style={{ height: "100vh", padding: "20%" }}>
+                <Typography variant="body1" className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
+                <ReactTags
+                    tags={preferences.dislikes}
+                    delimiters={delimiters}
+                    handleDelete={handleDislikesDelete}
+                    handleAddition={handleDislikesAddition}
+                    inputFieldPosition="bottom"
+                    autocomplete
+                />
+                <ScrollIntoView selector={"#generate-meal-plan"} style={{ padding: 15 }}>
+                    <Button variant="contained">Next</Button>
+                </ScrollIntoView>
+            </div>
+        )
+    }
+
     const handleLikesAddition = (tag) => {
         setPreferences({ ...preferences, likes: [...preferences.likes, tag] });
     };
@@ -118,25 +133,14 @@ function Create() {
         <div className="App">
             <div className="container">
                 <p>Create a new meal plan</p>
-                <Typography variant="body1" className='mealPlanPreferenceQuestions'>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
-                <ReactTags
-                    tags={preferences.likes}
-                    delimiters={delimiters}
-                    handleDelete={handleLikesDelete}
-                    handleAddition={handleLikesAddition}
-                    inputFieldPosition="bottom"
-                    autocomplete
-                />
-                <Typography variant="body1" className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
-                <ReactTags
-                    tags={preferences.dislikes}
-                    delimiters={delimiters}
-                    handleDelete={handleDislikesDelete}
-                    handleAddition={handleDislikesAddition}
-                    inputFieldPosition="bottom"
-                    autocomplete
-                />
-                <LoadingButton loading={loading} variant="contained" style={{ margin: 30 }} onClick={generateMealPlan}>Generate meal plan</LoadingButton>
+                <Preferences />
+                <Dislikes />
+                <Dislikes />
+
+
+                <div id="generate-meal-plan" style={{ height: "100vh", padding: "20%" }}>
+                    <LoadingButton loading={loading} variant="contained" style={{ margin: 30 }} onClick={generateMealPlan}>Generate meal plan</LoadingButton>
+                </div>
             </div>
         </div>
     )
