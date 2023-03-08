@@ -168,6 +168,16 @@ function View() {
         setLoadingRecipe(false)
     }
 
+    
+
+    let recipeStrings = '';
+    if (selectedMeal && selectedMeal.recipe) {
+        recipeStrings = selectedMeal.recipe.split('\n').filter(v => v);
+    }
+
+    const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients): [];
+    const ingredientStrings = ingredients.map(i => `${i[0]} (${i[1]})`)
+
     return loading ?
         (<div className="loadingContainer">
             <Pinwheel size={35} color="#231F20" />
@@ -191,8 +201,10 @@ function View() {
                                 selectedMeal.recipe ?
                                     (
                                         <>
-                                            <div>{selectedMeal.recipe}</div>
-                                            <div>{JSON.stringify(selectedMeal.ingredients)}</div>
+                                            {recipeStrings.map(line => <div>{line}</div>)}
+                                            {ingredientStrings.map(line => <div>{line}</div>)}
+                                            {/* <div>{selectedMeal.recipe}</div> */}
+                                            {/* <div>{JSON.stringify(selectedMeal.ingredients)}</div> */}
                                         </>
                                     )
                                     :
