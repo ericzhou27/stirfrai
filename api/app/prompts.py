@@ -41,7 +41,7 @@ def prompt_response(auth, prompt, randomness=False):
 def macros_prompt(height, weight, goal):
     return f'''I'm {height} and {weight}.  I want to {goal}.  Give me approximate integer values for how much carbs, protein, fat, and calories per day I should be eating.  The carbs, protein, and fat should be in grams.  These values should be very carefully tailored to my height, weight, and goal.  Provide this in JSON format where there is a key-value pair for each value requested. All keys should be lowercase.  All values should be integers, not strings.  After providing the JSON, print ENDMEALPLAN.'''
 
-def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
+def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes, minutes, stars):
     likes_list = ', '.join(likes)
     dislikes_list = human_readable_list(dislikes)
 
@@ -52,7 +52,15 @@ def meal_plan_prompt(carbs, protein, fat, calories, likes, dislikes):
     if dislikes:
         dislikes_string = f'  Do not include meals that use {dislikes_list}.'
 
-    return f'''Provide semi-detailed meal names (not ingredient lists) for breakfast, lunch, and dinner, in that order.  Altogether, the meals need to provide {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.{likes_string}{dislikes_string}  Do not include meals with ingredients that don't go together.  The meals must be reasonable and taste good to the average American.  Provide them in valid JSON: a list of strings where the strings are meal names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON, including starting and ending brackets.  Do not include newlines or other invalid characters.  After the JSON concludes with a closing bracket, print ENDMEALPLAN.'''
+    time_string = ''
+    if minutes:
+        time_string = f'  Meals must take less than {minutes} minutes to prepare.'
+
+    ability_string = ''
+    if stars:
+        ability_string = f'Meals must be preparable by someone who is a {stars} out of 5 in cooking ability.'
+
+    return f'''Provide semi-detailed meal names (not ingredient lists) for breakfast, lunch, and dinner, in that order.  Altogether, the meals need to provide {carbs}g carbs per day, {protein}g protein per day, {fat}g fat per day, and {calories} calories per day.{likes_string}{dislikes_string}  Do not include meals with ingredients that don't go together.  The meals must be reasonable and taste good to the average American.{time_string}{ability_string}  Provide them in valid JSON: a list of strings where the strings are meal names, and no other information.  There should only be three list items.  Do not include breakfast, lunch, or dinner in the meal names.  The JSON list should be valid JSON, including starting and ending brackets.  Do not include newlines or other invalid characters.  After the JSON concludes with a closing bracket, print ENDMEALPLAN.'''
 
 def meal_detail_prompt(carbs, protein, fat, calories, meal1, meal2, meal3):
     return f'''My list of meals is as follows:
