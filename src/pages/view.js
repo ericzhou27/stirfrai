@@ -223,7 +223,7 @@ function View() {
         </div>)
         : validId ?
             (
-                <div className="container" style={{marginTop: 25}}>
+                <div className="container">
                     <Modal
                         size="lg"
                         centered
