@@ -7,6 +7,11 @@ import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { useHistory } from "react-router-dom";
+import Slider from '@mui/material/Slider';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 
 import '../styles/react_tags.css'
 
@@ -17,6 +22,8 @@ function Create() {
     const [preferences, setPreferences] = useState({
         likes: [],
         dislikes: [],
+        time: 30,
+        cookingAbility: "beginner"
     });
 
     const KeyCodes = {
@@ -64,7 +71,28 @@ function Create() {
         const likesUrl = preferences.likes ? "&like=" + preferences.likes.map(x => x.text).join("&like=") : "";
         const dislikesUrl = preferences.dislikes ? "&dislike=" + preferences.dislikes.map(x => x.text).join("&dislike=") : "";
 
-        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}${likesUrl}${dislikesUrl}`;
+        // Discretize cooking ability to values 1-5
+        var stars = "";
+        if (preferences.cookingAbility) {
+            stars = "&stars=";
+            switch (preferences.cookingAbility) {
+                case "beginner":
+                    stars += "1";
+                    break;
+
+                case "experienced":
+                    stars += "3";
+                    break;
+
+                default:
+                    stars += "5";
+                    break;
+            }
+        }
+
+        const minutes = preferences.time ? `&minutes=${preferences.time}` : "";
+
+        const url = `https://stirfrai.fly.dev/mealplan?carbs=${macrosData.carbs}&protein=${macrosData.protein}&fat=${macrosData.fat}&calories=${macrosData.calories}${likesUrl}${dislikesUrl}${minutes}${stars}`;
 
         const mealPlan = await axios.get(url)
             .then((resp) => {
@@ -133,6 +161,31 @@ function Create() {
                     inputFieldPosition="bottom"
                     autocomplete
                 />
+                <Typography variant="body1" className="mealPlanPreferenceQuestions">How much time can you spend cooking (in minutes)?</Typography>
+                <Slider
+                    size="small"
+                    defaultValue={30}
+                    min={5}
+                    max={90}
+                    step={5}
+                    marks
+                    style={{ width: "50%" }}
+                    aria-label="Small"
+                    valueLabelDisplay="on"
+                    onChange={(e) => setPreferences({ ...preferences, time: e.target.value })}
+                />
+                <Typography variant="body1" className="mealPlanPreferenceQuestions">How would you describe your cooking abilities?</Typography>
+                <FormControl onChange={(e) => setPreferences({ ...preferences, cookingAbility: e.target.value })}>
+                    <RadioGroup
+                        row
+                        name="row-radio-buttons-group"
+                    >
+                        <FormControlLabel value="beginner" control={<Radio />} label="Beginner" />
+                        <FormControlLabel value="experienced" control={<Radio />} label="Experienced" />
+                        <FormControlLabel value="expert" control={<Radio />} label="Expert" />
+                    </RadioGroup>
+                </FormControl>
+
                 <LoadingButton loading={loading} variant="contained" style={{ margin: 30 }} onClick={generateMealPlan}>Generate meal plan</LoadingButton>
             </div>
         </div>
