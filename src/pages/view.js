@@ -11,6 +11,7 @@ import { EditText, EditTextarea } from 'react-edit-text';
 import 'react-edit-text/dist/index.css';
 
 import '../App.css';
+import amazonFresh from '../imgs/amazonfresh.png'
 
 function useQuery() {
     const { search } = useLocation();
@@ -235,7 +236,12 @@ function View() {
     }
 
     const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
-        const ingredientStrings = ingredients.map(i => <>{i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'>(Amazon Fresh)</a> {i[1] ? `(${i[1]})` : ''}</>)
+        const ingredientStrings = ingredients.map(i => (
+            <>
+                {/* {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'>(Amazon Fresh)</a> {i[1] ? `(${i[1]})` : ''} */}
+                {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'> {i[1] ? `(${i[1]})` : ''}<img src={amazonFresh} style={{paddingLeft: 15, height: 15}}/></a>
+            </>
+        ))
 
     return loading ?
         (<div className="loadingContainer">
@@ -264,7 +270,9 @@ function View() {
                                 selectedMeal.recipe ?
                                     (
                                         <>
+                                            Ingredients:
                                             {ingredientStrings.map(line => <div>{line}</div>)}
+                                            <br />
                                             {recipeStrings.map(line => <div>{line}</div>)}
                                         </>
                                     )
