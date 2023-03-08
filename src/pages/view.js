@@ -209,6 +209,25 @@ function View() {
         })
     }
 
+    async function updateIndividualMeal(e) {
+        let currentMealPlan = mealPlan;
+        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].name = e.value;
+
+        // update remote state
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'mealplans', mealPlan.id), {
+            ...currentMealPlan
+        });
+
+        let newSelectedMeal = selectedMeal
+        newSelectedMeal.name = e.value
+
+        setSelectedMeal(newSelectedMeal)
+        setMealPlan(currentMealPlan)
+        setLoadingRecipe(false)
+
+        console.log(e.value)
+    }
+
     let recipeStrings = '';
     if (selectedMeal && selectedMeal.recipe) {
         recipeStrings = selectedMeal.recipe.split('\n').filter(v => v);
@@ -232,7 +251,11 @@ function View() {
                             setShowModal(false)
                         }}>
                         <Modal.Header closeButton>
-                            <Modal.Title>{selectedMeal.name ? selectedMeal.name : "Unnamed recipe"}</Modal.Title>
+                            <Modal.Title>
+                                <EditText showEditButton defaultValue={selectedMeal.name} onSave={updateIndividualMeal}>
+                                    {selectedMeal.name ? selectedMeal.name : "Unnamed recipe"}
+                                </EditText>
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             {loadingRecipe ? <Pinwheel size={35} color="#231F20" />
@@ -258,7 +281,7 @@ function View() {
                     </Modal>
 
                     {/* <p className="mealPlanTitle">{mealPlan.name || 'Unnamed Meal Plan'}</p> */}
-                    <EditText showEditButton className="mealPlanTitle" inputClassName='mealPlanTitle' defaultValue={mealPlan.name || 'Unnamed Meal Plan'} onSave={updateMealPlanName}/>
+                    <EditText showEditButton className="mealPlanTitle" inputClassName='mealPlanTitle' defaultValue={mealPlan.name || 'Unnamed Meal Plan'} onSave={updateMealPlanName} />
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
                 </div>
             ) :
