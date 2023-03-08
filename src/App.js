@@ -5,8 +5,7 @@ import {
   Route,
 } from "react-router-dom";
 
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "./constants/firebaseConfig"
 import Landing from "./pages/landing"
 import Home from "./pages/home"
@@ -21,6 +20,7 @@ import ButtonAppBar from './components/AppBar';
 function App() {
   const [loggedIn, setLoggedIn] = useState(true);
   const [setUp, setSetUp] = useState(true);
+  const musicRef = React.createRef()
 
 
   useEffect(() => {
@@ -36,8 +36,11 @@ function App() {
           setLoggedIn(false)
           setSetUp(false)
         }
-
       });
+
+      let music = musicRef.current;
+      music.load();
+      music.play();
     }
 
     fetchUserSetUp();
@@ -47,6 +50,13 @@ function App() {
     return (
       <Router>
         <div className='AppContainer'>
+          <audio loop ref={musicRef} id="firePlayer">
+            <source
+              src="https://audio.jukehost.co.uk/ZN0EnH29PtRGZt4kAVffM1IhXWo2BWbg"
+              type="audio/mp3"
+            />
+          </audio>
+
           <Switch>
             <Route path="/profile">
               <ButtonAppBar loggedIn={loggedIn} />
