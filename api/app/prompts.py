@@ -72,7 +72,7 @@ Give me the carbs, fat, protein, and calories of each meal.  The sum total numbe
 def meal_ingredients_prompt(recipe):
     return f'''{recipe}
     
-Provide a list of all ingredients necessary to cook the above recipe based on both the ingredients list and the instructions.  Provide it in JSON format where each entry is a list of two elements: ingredient name and ingredient amount (may be in cups, count, grams, etc.).  Do not include ingredients not in the recipe.  Include all ingredients in the recipe.  Make sure the output is valid JSON.  When that is completed, print ENDMEALPLAN.'''
+Provide a list of all ingredients necessary to cook the above recipe based on both the ingredients list and the instructions.  Provide it in JSON format where each entry is a list of two elements: ingredient name and ingredient amount (may be in cups, count, grams, etc.).  Do not include ingredients not in the recipe.  Include all ingredients in the recipe.  Make sure the output is valid JSON.  Make sure all strings are wrapped in double quotation marks.  When that is completed, print ENDMEALPLAN.'''
 
 def meal_recipe_prompt(dish, carbs, fat, protein, calories, minutes, stars):
     time_string = ''
