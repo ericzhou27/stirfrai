@@ -114,6 +114,8 @@ function Profile() {
         setSuccessAlert(true);
     }
 
+    const hasProfile = !(macros.carbs === 0 && macros.protein === 0 && macros.fat === 0 && macros.calories === 0)
+
     return loading ?
         (<div className="loadingContainer">
             <Pinwheel size={35} color="#231F20" />
@@ -129,33 +131,42 @@ function Profile() {
                     noValidate
                     autoComplete="off"
                 >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', flexDirection: 'row', width: 350 }}>
-                            <TextField id="outlined-basic" label="Height (in feet)" variant="outlined" type="number" value={profile.height_ft} onChange={(val) => setProfile({ ...profile, height_ft: val.target.value })} />
-                            <TextField id="outlined-basic" label="Height (in inches)" variant="outlined" type="number" value={profile.height_in} onChange={(val) => setProfile({ ...profile, height_in: val.target.value })} />
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'top', height: 500 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', marginRight: 50 }}>
+                            <Typography variant="h5">Your information</Typography>
+                                <TextField id="outlined-basic" label="Height (in feet)" variant="outlined" type="number" style={{ width: 400 }} value={profile.height_ft} onChange={(val) => setProfile({ ...profile, height_ft: val.target.value })} />
+                                <TextField id="outlined-basic" label="Height (in inches)" variant="outlined" type="number" style={{ width: 400 }} value={profile.height_in} onChange={(val) => setProfile({ ...profile, height_in: val.target.value })} />
+                            <TextField id="outlined-basic" label="Weight (in lbs)" variant="outlined" type="number" style={{ width: 400 }} value={profile.weight} onChange={(val) => setProfile({ ...profile, weight: val.target.value })} />
+                            <TextField id="outlined-basic" label="Goals (i.e. lose weight, gain muscle)" variant="outlined" multiline style={{ width: 400 }} rows={2} value={profile.goals} InputLabelProps={{ shrink: true }} onChange={(val) => setProfile({ ...profile, goals: val.target.value })} />
+                            <LoadingButton style={{marginTop: 'auto'}} loading={profileLoading} variant="contained" onClick={saveProfileDetails}>Save Profile</LoadingButton>
                         </div>
-                        <TextField id="outlined-basic" label="Weight (in lbs)" variant="outlined" type="number" value={profile.weight} onChange={(val) => setProfile({ ...profile, weight: val.target.value })} />
-                        <TextField id="outlined-basic" label="Goals (i.e. lose weight, gain muscle)" variant="outlined" multiline style={{ width: 400 }} rows={2} value={profile.goals} InputLabelProps={{ shrink: true }} onChange={(val) => setProfile({ ...profile, goals: val.target.value })} />
-                        <LoadingButton loading={profileLoading} variant="contained" onClick={saveProfileDetails}>Save Profile</LoadingButton>
-                        {macros.carbs === 0 && macros.protein === 0 && macros.fat === 0 && macros.calories === 0 ?
-                            <Typography variant="h4" style={{ padding: 20 }}>Add your profile details to view your estimated macros!</Typography>
-                            : (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 40 }}>
-                                    <Typography variant="h5">Your saved macros</Typography>
-                                    <TextField id="outlined-basic" label="carbs" variant="outlined" type="number" value={macros.carbs} onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
-                                    <TextField id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
-                                    <TextField id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
-                                    <TextField id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
-                                    <LoadingButton loading={macrosLoading} variant="contained" onClick={saveMacros}>Save Macros</LoadingButton>
-                                </div>
-                            )
-                        }
-                        <Snackbar
-                            open={successAlert}
-                            autoHideDuration={2000}
-                            onClose={() => setSuccessAlert(false)}
-                            message="Successfully saved!"
-                        />
+                        {/* <div class="row-divider"></div> */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', marginLeft: 50 }}>
+                            {/* {macros.carbs === 0 && macros.protein === 0 && macros.fat === 0 && macros.calories === 0 ?
+                                <Typography variant="h4" style={{ padding: 20 }}>Add your profile details to view your estimated macros!</Typography>
+                                : (<>
+                                        <Typography variant="h5">Your macros</Typography>
+                                        <TextField id="outlined-basic" label="carbs" variant="outlined" type="number" value='{macros.carbs}' onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
+                                        <TextField id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
+                                        <TextField id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
+                                        <TextField id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
+                                        <LoadingButton style={{marginTop: 'auto'}} loading={macrosLoading} variant="contained" onClick={saveMacros}>Save Macros</LoadingButton>
+                                    </>
+                                )
+                            } */}
+                            <Typography variant="h5">Your macros</Typography>
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="carbs" variant="outlined" type="number" value={macros.carbs} onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
+                            <LoadingButton disabled={!hasProfile} style={{marginTop: 'auto'}} loading={macrosLoading} variant="contained" onClick={saveMacros}>{hasProfile ? 'Save Macros' : 'Create profile first!'}</LoadingButton>
+                            <Snackbar
+                                open={successAlert}
+                                autoHideDuration={2000}
+                                onClose={() => setSuccessAlert(false)}
+                                message="Successfully saved!"
+                            />
+                        </div>
                     </div>
                 </Box>
             </div>
