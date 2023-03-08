@@ -51,8 +51,8 @@ function Profile() {
                 const macrosDoc = await getDoc(doc(db, 'users', authUser.uid, 'macros', 'values'));
                 if (macrosDoc.exists()) {
                     setMacros(macrosDoc.data());
-                    setLoading(false)
                 }
+                setLoading(false)
             })
         }
 
