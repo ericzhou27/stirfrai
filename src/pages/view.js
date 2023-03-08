@@ -230,11 +230,12 @@ function View() {
 
     let recipeStrings = '';
     if (selectedMeal && selectedMeal.recipe) {
-        recipeStrings = selectedMeal.recipe.split('\n').filter(v => v);
+        const recipeString = selectedMeal.recipe.substring(selectedMeal.recipe.toLowerCase().indexOf('instructions'));
+        recipeStrings = recipeString.split('\n').filter(v => v);
     }
 
     const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
-        const ingredientStrings = ingredients.map(i => <><a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`}>{i[0]}</a> ({i[1]})</>)
+        const ingredientStrings = ingredients.map(i => <>{i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'>(Amazon Fresh)</a> {i[1] ? `(${i[1]})` : ''}</>)
 
     return loading ?
         (<div className="loadingContainer">
@@ -263,8 +264,8 @@ function View() {
                                 selectedMeal.recipe ?
                                     (
                                         <>
-                                            {recipeStrings.map(line => <div>{line}</div>)}
                                             {ingredientStrings.map(line => <div>{line}</div>)}
+                                            {recipeStrings.map(line => <div>{line}</div>)}
                                         </>
                                     )
                                     :
