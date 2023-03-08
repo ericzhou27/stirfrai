@@ -43,11 +43,7 @@ function Home() {
                                 history.push(`/view?id=${mealPlan.id}`)
                             }}
                             className="mealPlanContainer">
-<<<<<<< Updated upstream
-                            {mealPlan.id}
-=======
                             <p className="mealPlanName">{mealPlan.name ? mealPlan.name : "Unnamed Mealplan"}</p>
->>>>>>> Stashed changes
                         </div>
                     )
                 })}
