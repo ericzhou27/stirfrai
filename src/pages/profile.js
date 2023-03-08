@@ -140,20 +140,7 @@ function Profile() {
                             <TextField id="outlined-basic" label="Goals (i.e. lose weight, gain muscle)" variant="outlined" multiline style={{ width: 400 }} rows={2} value={profile.goals} InputLabelProps={{ shrink: true }} onChange={(val) => setProfile({ ...profile, goals: val.target.value })} />
                             <LoadingButton style={{marginTop: 'auto'}} loading={profileLoading} variant="contained" onClick={saveProfileDetails}>Save Profile</LoadingButton>
                         </div>
-                        {/* <div class="row-divider"></div> */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', marginLeft: 50 }}>
-                            {/* {macros.carbs === 0 && macros.protein === 0 && macros.fat === 0 && macros.calories === 0 ?
-                                <Typography variant="h4" style={{ padding: 20 }}>Add your profile details to view your estimated macros!</Typography>
-                                : (<>
-                                        <Typography variant="h5">Your macros</Typography>
-                                        <TextField id="outlined-basic" label="carbs" variant="outlined" type="number" value='{macros.carbs}' onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
-                                        <TextField id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
-                                        <TextField id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
-                                        <TextField id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
-                                        <LoadingButton style={{marginTop: 'auto'}} loading={macrosLoading} variant="contained" onClick={saveMacros}>Save Macros</LoadingButton>
-                                    </>
-                                )
-                            } */}
                             <Typography variant="h5">Your macros</Typography>
                             <TextField disabled={!hasProfile} id="outlined-basic" label="carbs" variant="outlined" type="number" value={macros.carbs} onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
                             <TextField disabled={!hasProfile} id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
