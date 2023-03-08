@@ -28,6 +28,19 @@ body::-webkit-scrollbar {
   /* border: 1px solid red; */
 }
 
+.splash-image {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -99;
+  background-position: top;
+  background-size: 100% auto;
+  height: 500px;
+  /* filter: blur(8px); */
+}
+
 .googleSignIn {
   width: 25%;
   filter: drop-shadow(8px 8px 5px #bebebe) drop-shadow(-8px -8px 5px #fff)
