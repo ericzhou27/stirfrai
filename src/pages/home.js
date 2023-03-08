@@ -28,6 +28,8 @@ function Home() {
         fetchMealPlans()
     }, [])
 
+    console.log(mealPlans)
+
 
     return loading ?
         (<div className="loadingContainer">
@@ -43,7 +45,7 @@ function Home() {
                                 history.push(`/view?id=${mealPlan.id}`)
                             }}
                             className="mealPlanContainer">
-                            {mealPlan.id}
+                            {mealPlan.name || 'Unnamed Meal Plan'}
                         </div>
                     )
                 })}

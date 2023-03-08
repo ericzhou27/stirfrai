@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import { useLocation } from "react-router-dom";
 import { Pinwheel } from '@uiball/loaders'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
+
+import { EditText, EditTextarea } from 'react-edit-text';
+import 'react-edit-text/dist/index.css';
 
 import '../App.css';
 
@@ -199,6 +202,13 @@ function View() {
         console.log(newMeal)
     }
 
+    async function updateMealPlanName(e) {
+        const docRef = doc(db, 'users', auth.currentUser.uid, 'mealplans', mealPlan.id)
+        await updateDoc(docRef, {
+            name: e.value
+        })
+    }
+
     let recipeStrings = '';
     if (selectedMeal && selectedMeal.recipe) {
         recipeStrings = selectedMeal.recipe.split('\n').filter(v => v);
@@ -213,7 +223,7 @@ function View() {
         </div>)
         : validId ?
             (
-                <div className="container">
+                <div className="container" style={{marginTop: 25}}>
                     <Modal
                         size="lg"
                         centered
@@ -247,7 +257,8 @@ function View() {
                         </Modal.Body>
                     </Modal>
 
-                    <p className="mealPlanTitle">{mealPlan.name}</p>
+                    {/* <p className="mealPlanTitle">{mealPlan.name || 'Unnamed Meal Plan'}</p> */}
+                    <EditText showEditButton className="mealPlanTitle" inputClassName='mealPlanTitle' defaultValue={mealPlan.name || 'Unnamed Meal Plan'} onSave={updateMealPlanName}/>
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
                 </div>
             ) :

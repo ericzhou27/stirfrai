@@ -34,7 +34,7 @@ def prompt_response(auth, prompt, randomness=False):
     request_result = service.make_request(auth, request)
     text = request_result.completions[0].text
     try:
-        return json.loads(text)
+        return json.loads(text.replace('\n', ''))
     except ValueError as e:
         return text
 

@@ -77,7 +77,7 @@ function Create() {
             "timestamp": Timestamp.now(),
             "likes": preferences.likes,
             "dislikes": preferences.dislikes,
-            "name": "Unnamed Recipe",
+            "name": "Unnamed Meal Plan",
             "values": mealPlan.map((day) => {
                 // Can't have nested arrays, so use dictionary for the individual meals
                 return Object.assign({}, ...day.map((meal, index) => ({
