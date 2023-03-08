@@ -99,8 +99,10 @@ def recipe():
     protein = request.args.get('protein', type=int)
     fat = request.args.get('fat', type=int)
     calories = request.args.get('calories', type=int)
+    minutes = request.args.get('minutes', type=int)
+    stars = request.args.get('stars', type=int)
 
-    prompt = meal_recipe_prompt(dish, carbs, fat, protein, calories)
+    prompt = meal_recipe_prompt(dish, carbs, fat, protein, calories, minutes, stars)
 
     response = prompt_response(auth, prompt)
 

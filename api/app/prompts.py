@@ -74,8 +74,16 @@ def meal_ingredients_prompt(recipe):
     
 Provide a list of all ingredients necessary to cook the above recipe based on both the ingredients list and the instructions.  Provide it in JSON format where each entry is a list of two elements: ingredient name and ingredient amount (may be in cups, count, grams, etc.).  Do not include ingredients not in the recipe.  Include all ingredients in the recipe.  Make sure the output is valid JSON.  When that is completed, print ENDMEALPLAN.'''
 
-def meal_recipe_prompt(dish, carbs, fat, protein, calories):
-    return f'''Please provide a recipe for "{dish}".  The meal should contain {carbs}g carbs, {fat}g fat, {protein}g protein, and {calories} calories.  Keep track of these requirements by listing each ingredient's nutritional values (fat, protein, carbs, and calories) and making sure they sum to the required values.  Increase the number of servings if necessary.  After listing recipe instructions, print ENDMEALPLAN.'''
+def meal_recipe_prompt(dish, carbs, fat, protein, calories, minutes, stars):
+    time_string = ''
+    if minutes:
+        time_string = f'  The recipe must take less than {minutes} minutes to prepare.'
+
+    ability_string = ''
+    if stars:
+        ability_string = f'The recipe must be preparable by someone who is a {stars} out of 5 in cooking ability.'
+
+    return f'''Please provide a recipe for "{dish}".{time_string}{ability_string}  The meal should contain {carbs}g carbs, {fat}g fat, {protein}g protein, and {calories} calories.  Keep track of these requirements by listing each ingredient's nutritional values (fat, protein, carbs, and calories) and making sure they sum to the required values.  Increase the number of servings if necessary.  After listing recipe instructions, print ENDMEALPLAN.'''
 
 def meal_recipe_clean_prompt(recipe):
     return f'''{recipe}
