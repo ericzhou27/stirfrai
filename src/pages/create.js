@@ -8,6 +8,8 @@ import axios from 'axios';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { useHistory } from "react-router-dom";
 
+import '../styles/react_tags.css'
+
 function Create() {
     const [loading, setLoading] = useState(false);
     const history = useHistory()
