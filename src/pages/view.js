@@ -215,7 +215,7 @@ function View() {
     }
 
     const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
-    const ingredientStrings = ingredients.map(i => `${i[0]} (${i[1]})`)
+        const ingredientStrings = ingredients.map(i => <><a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`}>{i[0]}</a> ({i[1]})</>)
 
     return loading ?
         (<div className="loadingContainer">
