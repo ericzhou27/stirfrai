@@ -18,15 +18,6 @@ body::-webkit-scrollbar {
   align-items: center;
 }
 
-.container {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  flex: 5;
-  align-items: center;
-  padding: 0px 0px 20px 0px;
-  /* border: 1px solid red; */
-}
 
 .splash-image {
   position: absolute;
@@ -67,6 +58,23 @@ p {
 
 .toolbar {
   position: fixed;
+}
+
+.mealPlanName {
+  margin: 0px;
+  padding: 20px;
+  font-size: 1.5em;
+}
+
+.container {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  flex: 5;
+  align-items: center;
+  padding: 5vw 0vw;
+  /* padding: 0px 0px 20px 0px; */
+  /* border: 1px solid red; */
 }
 
 .mealPlanContainer {
