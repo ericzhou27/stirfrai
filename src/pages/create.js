@@ -108,7 +108,7 @@ function Create() {
         <div className="App">
             <div className="container">
                 <p>Create a new meal plan</p>
-                <Typography variant="body1" style={{ padding: 20 }}>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
+                <Typography variant="body1" className='mealPlanPreferenceQuestions'>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
                 <ReactTags
                     tags={preferences.likes}
                     delimiters={delimiters}
@@ -117,7 +117,7 @@ function Create() {
                     inputFieldPosition="bottom"
                     autocomplete
                 />
-                <Typography variant="body1" style={{ padding: 20 }}>What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
+                <Typography variant="body1" className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
                 <ReactTags
                     tags={preferences.dislikes}
                     delimiters={delimiters}

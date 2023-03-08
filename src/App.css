@@ -166,3 +166,8 @@ p {
   /* border: 1px solid blue; */
 
 }
+
+.mealPlanPreferenceQuestions {
+  padding: 20px;
+  color: black;
+}
