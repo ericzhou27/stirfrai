@@ -50,8 +50,8 @@ a {
   font-family: "lato";
   font-size: 1em;
   font-weight: 600;
-  text-decoration: none;
-  color: white;
+  text-decoration: none !important;
+  color: white !important;
 }
 
 p {
