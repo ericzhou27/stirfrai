@@ -36,17 +36,19 @@ export default function ButtonAppBar(props) {
       });
   }
 
+  // background-color: #e0e0e0;
+
   return (
     <Box >
-      <AppBar position="static" style={{ background: '#000' }}>
+      <AppBar position="static" style={{ background: '#e0e0e0', boxShadow: 'none' }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <a href='/home'>stirfr.ai</a>
+            <a style={{ fontFamily: 'Playfair Display', fontWeight: 400, fontStyle: 'italic', color: 'black' }} href='/home'>stirfr.ai</a>
           </Typography>
-          <Button ><a href="/profile">Profile</a></Button>
+          <Button ><a href="/profile" style={{ fontFamily: 'Playfair Display', fontWeight: 400, color: 'black' }}>Profile</a></Button>
           {props.loggedIn ?
-            <Button color="inherit" onClick={logout}>Logout</Button> :
-            <Button color="inherit" onClick={login}>Login</Button>}
+            <Button color="inherit" onClick={logout} style={{ fontFamily: 'Playfair Display', fontWeight: 700, color: 'black' }} >Logout</Button> :
+            <Button color="inherit" onClick={login} style={{ fontFamily: 'Playfair Display', fontWeight: 700, color: 'black' }}>Login</Button>}
         </Toolbar>
       </AppBar>
     </Box>

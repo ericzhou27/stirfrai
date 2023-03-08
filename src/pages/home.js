@@ -28,9 +28,6 @@ function Home() {
         fetchMealPlans()
     }, [])
 
-    console.log(mealPlans)
-
-
     return loading ?
         (<div className="loadingContainer">
             <Pinwheel size={35} color="#231F20" />
@@ -49,10 +46,13 @@ function Home() {
                         </div>
                     )
                 })}
-                <div className="button" onClick={() => {
+                <div className="createButton" onClick={() => {
                     history.push(`/create`)
-                }}><p style={{ margin: 0 }}>CREATE</p></div>
-            </div>
+                }}><p style={{
+                    fontSize: "2em",
+                    margin: 0, color: 'black', fontFamily: 'Playfair Display', fontWeight: 400
+                }}>+</p></div>
+            </div >
         )
 }
 
