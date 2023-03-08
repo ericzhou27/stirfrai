@@ -106,3 +106,6 @@ def meal_modification_prompt(meal, likes, dislikes):
     if dislikes:
         dislikes_string = f'  Do not include {dislikes_list}.'
     return f'''I currently have the meal {meal}.  I don't want it, so provide the name of a totally different meal for me.{likes_string}{dislikes_string}  After providing the name, print ENDMEALPLAN.'''
+
+def recipe_validation_prompt(name):
+    return f'''If "{name}" is a valid recipe name, print 1.  Otherwise, print 0.'''

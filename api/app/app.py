@@ -15,7 +15,8 @@ from prompts import (
     meal_ingredients_prompt,
     meal_recipe_prompt,
     meal_recipe_clean_prompt,
-    meal_modification_prompt
+    meal_modification_prompt,
+    recipe_validation_prompt
 )
 
 # localhost:8080
@@ -135,6 +136,21 @@ def meal_replacement():
     response = prompt_response(auth, prompt, randomness=True)
 
     return response
+
+
+recipe_validation_prompt
+# localhost:8080/mealvalidation?meal=Lemon Pepper Pork with Brown Rice
+@app.route('/mealvalidation')
+def meal_validation():
+    auth, used, quota = autobalance()
+
+    meal = request.args.get('meal', type=str)
+
+    prompt = recipe_validation_prompt(meal)
+
+    response = prompt_response(auth, prompt)
+
+    return { 'valid': bool(response) }
 
 
 if __name__ == '__main__':
