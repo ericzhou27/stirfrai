@@ -129,7 +129,6 @@ function View() {
         setLoadingRecipe(true)
         let currentMealPlan = mealPlan
 
-        // localhost:8080/mealmacros?carbs=340&fat=75&calories=2100&protein=175&meal1=Oatmeal with Skimmed Milk, Walnut & Blueberries&meal2=Roast Chicken Salad Bowl with Mixed Greens & Sweet Potatoes&meal3=Grilled Salmon with Brown Rice & Broccoli
         const macrosURL = encodeURI(`https://stirfrai.fly.dev/mealmacros?carbs=${macros.carbs}&protein=${macros.protein}&fat=${macros.fat}&calories=${macros.calories}&meal1=${selectedMeal.name}&meal2=${selectedMeal.m2}&meal3=${selectedMeal.m3}`);
         const genMacros = await axios.get(macrosURL)
             .then((resp) => {
@@ -138,7 +137,6 @@ function View() {
             .catch((error) => console.log("received error when querying for meal plans", error));
         const tMacros = genMacros[0]
 
-        // localhost:8080/recipe?carbs=120&fat=25&calories=850&protein=75&dish=Roast Chicken Salad Bowl with Mixed Greens %26 Sweet Potatoes
         const recipeURL = encodeURI(`https://stirfrai.fly.dev/recipe?carbs=${tMacros.carbs}&protein=${tMacros.protein}&fat=${tMacros.fat}&calories=${tMacros.calories}&dish=${selectedMeal.name}`);
         const recipe = await axios.get(recipeURL)
             .then((resp) => {
@@ -146,7 +144,6 @@ function View() {
             })
             .catch((error) => console.log("received error when querying for meal plans", error));
 
-        // localhost:8080/ingredients?recipe=<...recipe...>
         const ingredientsURL = encodeURI(`https://stirfrai.fly.dev/ingredients?recipe=${recipe}`);
         const ingredients = await axios.get(ingredientsURL)
             .then((resp) => {
@@ -168,14 +165,46 @@ function View() {
         setLoadingRecipe(false)
     }
 
-    
+    async function swapRecipe(selectedMeal) {
+        setLoadingRecipe(true)
+        let currentMealPlan = mealPlan
+
+        console.log('SWAPPING - ', currentMealPlan, selectedMeal)
+
+        const likesUrl = mealPlan.likes ? "&like=" + mealPlan.likes.map(x => x.text).join("&like=") : "";
+        const dislikesUrl = mealPlan.dislikes ? "&dislike=" + mealPlan.dislikes.map(x => x.text).join("&dislike=") : "";
+
+        // localhost:8080/mealreplacement?meal=Lemon Pepper Pork with Brown Rice&dislike=chicken&dislike=tomato&dislike=peppers&like=beef&like=lemon pepper&like=pork
+        const replaceURL = encodeURI(`https://stirfrai.fly.dev/mealreplacement?meal=${selectedMeal.name}${likesUrl}${dislikesUrl}`);
+        const newMeal = await axios.get(replaceURL)
+            .then((resp) => {
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for meal plans", error));
+
+        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].name = newMeal
+
+        // update remote state
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'mealplans', mealPlan.id), {
+            ...currentMealPlan
+        });
+
+        let newSelectedMeal = selectedMeal
+        newSelectedMeal.name = newMeal
+
+        setSelectedMeal(newSelectedMeal)
+        setMealPlan(currentMealPlan)
+        setLoadingRecipe(false)
+
+        console.log(newMeal)
+    }
 
     let recipeStrings = '';
     if (selectedMeal && selectedMeal.recipe) {
         recipeStrings = selectedMeal.recipe.split('\n').filter(v => v);
     }
 
-    const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients): [];
+    const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
     const ingredientStrings = ingredients.map(i => `${i[0]} (${i[1]})`)
 
     return loading ?
@@ -193,7 +222,7 @@ function View() {
                             setShowModal(false)
                         }}>
                         <Modal.Header closeButton>
-                            <Modal.Title>{selectedMeal.name}</Modal.Title>
+                            <Modal.Title>{selectedMeal.name ? selectedMeal.name : "Unnamed recipe"}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             {loadingRecipe ? <Pinwheel size={35} color="#231F20" />
@@ -208,14 +237,19 @@ function View() {
                                         </>
                                     )
                                     :
-                                    <Button variant="primary" onClick={() => { generateRecipe(selectedMeal) }}>
-                                        Generate Recipe
-                                    </Button>
+                                    <>
+                                        <Button variant="secondary" style={{ marginRight: 10 }} onClick={() => { swapRecipe(selectedMeal) }}>
+                                            Swap Recipe
+                                        </Button>
+                                        <Button variant="primary" onClick={() => { generateRecipe(selectedMeal) }}>
+                                            Generate Recipe
+                                        </Button>
+                                    </>
                             }
                         </Modal.Body>
                     </Modal>
 
-                    <p className="mealPlanTitle">{mealPlan.id}</p>
+                    <p className="mealPlanTitle">{mealPlan.name}</p>
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
                 </div>
             ) :
