@@ -150,7 +150,7 @@ p {
 }
 
 .mealPlanTitle {
-  font-family: "lato";
+  font-family: "Playfair Display";
   font-size: 2em;
   font-weight: 600;
   color: black;
@@ -179,7 +179,7 @@ p {
 .dayContainerTitle {
   padding: 5px;
   margin-bottom: 5px;
-  font-family: "lato";
+  font-family: "Playfair Display";
   font-size: 1.5em;
   font-weight: 600;
   color: white;
@@ -203,7 +203,7 @@ p {
 }
 
 .mealTitle {
-  font-family: "lato";
+  font-family: "Playfair Display";
   font-size: 1em;
   font-weight: 300;
   color: white;
@@ -221,7 +221,7 @@ p {
 }
 
 .mealContents {
-  font-family: "lato";
+  font-family: "Playfair Display";
   font-size: 1em;
   font-weight: 300;
   color: white;

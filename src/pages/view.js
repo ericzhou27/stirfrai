@@ -290,8 +290,15 @@ function View() {
                     </Modal>
 
                     {/* <p className="mealPlanTitle">{mealPlan.name || 'Unnamed Meal Plan'}</p> */}
-                    <EditText showEditButton className="mealPlanTitle" inputClassName='mealPlanTitle' defaultValue={mealPlan.name || 'Unnamed Meal Plan'} onSave={updateMealPlanName} />
+                    <EditText
+                        showEditButton
+                        className="mealPlanTitle"
+                        inputClassName='mealPlanTitle'
+                        defaultValue={mealPlan.name || 'Unnamed Meal Plan'}
+                        editButtonProps={{ style: {backgroundColor: 'transparent'} }}
+                        onSave={updateMealPlanName} />
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
+                    <div style={{marginTop: 25}} />
                 </div>
             ) :
             (
