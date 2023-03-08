@@ -6,9 +6,11 @@ import { doc, addDoc, collection, getDoc, Timestamp } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import axios from 'axios';
 import { WithContext as ReactTags } from 'react-tag-input';
+import { useHistory } from "react-router-dom";
 
 function Create() {
     const [loading, setLoading] = useState(false);
+    const history = useHistory()
 
     const [preferences, setPreferences] = useState({
         likes: [],
@@ -69,7 +71,7 @@ function Create() {
             })
             .catch((error) => console.log("received error when querying for meal plans", error));
 
-        await addDoc(collection(db, 'users', auth.currentUser.uid, 'mealplans'), {
+        const id = await addDoc(collection(db, 'users', auth.currentUser.uid, 'mealplans'), {
             "timestamp": Timestamp.now(),
             "values": mealPlan.map((day) => {
                 // Can't have nested arrays, so use dictionary for the individual meals
@@ -81,10 +83,13 @@ function Create() {
                     }
                 })))
             })
-        }).then(() => {
+        }).then((data) => {
             console.log("saved mealplans data");
             setLoading(false);
+            return data.id;
         });
+
+        history.push(`/view?id=${id}`);
     }
 
     const handleLikesAddition = (tag) => {
