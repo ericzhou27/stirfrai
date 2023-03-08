@@ -43,7 +43,7 @@ function Home() {
                                 history.push(`/view?id=${mealPlan.id}`)
                             }}
                             className="mealPlanContainer">
-                            <p>{mealPlan.id}</p>
+                            {mealPlan.id}
                         </div>
                     )
                 })}
