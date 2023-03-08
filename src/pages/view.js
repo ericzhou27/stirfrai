@@ -203,8 +203,6 @@ function View() {
                                         <>
                                             {recipeStrings.map(line => <div>{line}</div>)}
                                             {ingredientStrings.map(line => <div>{line}</div>)}
-                                            {/* <div>{selectedMeal.recipe}</div> */}
-                                            {/* <div>{JSON.stringify(selectedMeal.ingredients)}</div> */}
                                         </>
                                     )
                                     :
