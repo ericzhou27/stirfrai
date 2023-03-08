@@ -45,13 +45,13 @@ function Home() {
                                 history.push(`/view?id=${mealPlan.id}`)
                             }}
                             className="mealPlanContainer">
-                            {mealPlan.name || 'Unnamed Meal Plan'}
+                            <p className="mealPlanName">{mealPlan.name ? mealPlan.name : "Unnamed Mealplan"}</p>
                         </div>
                     )
                 })}
                 <div className="button" onClick={() => {
                     history.push(`/create`)
-                }}><p style={{ margin: 0 }}>Create</p></div>
+                }}><p style={{ margin: 0 }}>CREATE</p></div>
             </div>
         )
 }
