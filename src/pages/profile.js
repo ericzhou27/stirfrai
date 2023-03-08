@@ -142,9 +142,9 @@ function Profile() {
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'top', marginLeft: 50 }}>
                             <Typography variant="h5">Your macros</Typography>
-                            <TextField disabled={!hasProfile} id="outlined-basic" label="carbs" variant="outlined" type="number" value={macros.carbs} onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
-                            <TextField disabled={!hasProfile} id="outlined-basic" label="protein" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
-                            <TextField disabled={!hasProfile} id="outlined-basic" label="fat" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="carbs (in grams)" variant="outlined" type="number" value={macros.carbs} onChange={(val) => setMacros({ ...macros, carbs: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="protein (in grams)" variant="outlined" type="number" value={macros.protein} onChange={(val) => setMacros({ ...macros, protein: val.target.value })} />
+                            <TextField disabled={!hasProfile} id="outlined-basic" label="fat (in grams)" variant="outlined" type="number" value={macros.fat} onChange={(val) => setMacros({ ...macros, fat: val.target.value })} />
                             <TextField disabled={!hasProfile} id="outlined-basic" label="calories" variant="outlined" type="number" value={macros.calories} onChange={(val) => setMacros({ ...macros, calories: val.target.value })} />
                             <LoadingButton disabled={!hasProfile} style={{marginTop: 'auto'}} loading={macrosLoading} variant="contained" onClick={saveMacros}>{hasProfile ? 'Save Macros' : 'Create profile first!'}</LoadingButton>
                             <Snackbar
