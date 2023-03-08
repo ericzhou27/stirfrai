@@ -15,6 +15,7 @@ import Profile from "./pages/profile"
 import View from "./pages/view"
 
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import ButtonAppBar from './components/AppBar';
 
 function App() {

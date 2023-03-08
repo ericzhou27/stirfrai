@@ -3,6 +3,9 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import { useLocation } from "react-router-dom";
 import { Pinwheel } from '@uiball/loaders'
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import axios from 'axios';
 
 import '../App.css';
 
@@ -15,8 +18,6 @@ function Meal(props) {
     const recipe = props.meal.recipe
     const ingredients = props.meal.ingredients
     const name = props.meal.name
-
-    console.log(recipe, ingredients, name)
 
     return (
         <p className='mealContents'>{name}</p>
@@ -32,17 +33,26 @@ function Day(props) {
     return (
         <div className='dayContainer'>
             <div className='dayContainerTitle'>{dayDict[props.index]}</div>
-            <div className='mealContainer'>
+            <div className='mealContainer' onClick={() => {
+                props.setSelectedMeal({ meal: "BREAKFAST", index: props.index, m2: lunch.name, m3: dinner.name, ...breakfast, })
+                props.handleModal(true)
+            }}>
                 <p className='mealTitle'>Breakfast</p>
                 <div className='divider' />
                 <Meal meal={breakfast} />
             </div>
-            <div className='mealContainer'>
+            <div className='mealContainer' onClick={() => {
+                props.setSelectedMeal({ meal: "LUNCH", index: props.index, m2: breakfast.name, m3: dinner.name, ...lunch })
+                props.handleModal(true)
+            }}>
                 <p className='mealTitle'>Lunch</p>
                 <div className='divider' />
                 <Meal meal={lunch} />
             </div>
-            <div className='mealContainer'>
+            <div className='mealContainer' onClick={() => {
+                props.setSelectedMeal({ meal: "DINNER", index: props.index, m2: lunch.name, m3: breakfast.name, ...dinner })
+                props.handleModal(true)
+            }}>
                 <p className='mealTitle'>Dinner</p>
                 <div className='divider' />
                 <Meal meal={dinner} />
@@ -53,12 +63,14 @@ function Day(props) {
 
 function MealPlan(props) {
     const days = props.mealPlan.values
-    console.log("DATA - ", props.mealPlan, days)
     return (
         days.map((day, index) => {
             return (
                 <div className='mealPlanSection'>
-                    <Day day={day} index={index} />
+                    <Day day={day} index={index}
+                        handleModal={props.handleModal}
+                        setSelectedMeal={props.setSelectedMeal}
+                    />
                 </div>
             )
         })
@@ -69,6 +81,12 @@ function View() {
     const [validId, setValidId] = useState(false)
     const [mealPlan, setMealPlan] = useState({})
     const [loading, setLoading] = useState(true);
+    const [macros, setMacros] = useState({});
+    const [selectedMeal, setSelectedMeal] = useState({})
+    const [showModal, setShowModal] = useState(false)
+    const [loadingRecipe, setLoadingRecipe] = useState(false)
+
+
     const query = useQuery();
 
     useEffect(() => {
@@ -83,7 +101,7 @@ function View() {
                     setValidId(true)
                     setLoading(false)
 
-                    console.log({ id: mealPlanDoc.id, ...mealPlanDoc.data() })
+                    console.log("MEAL PLAN - ", { id: mealPlanDoc.id, ...mealPlanDoc.data() })
                 } else {
                     setValidId(false)
                     setLoading(false)
@@ -94,6 +112,61 @@ function View() {
         fetchMealPlan()
     }, [])
 
+    useEffect(() => {
+        async function fetchMacros() {
+            auth.onAuthStateChanged(async (authUser) => {
+                const macrosDoc = await getDoc(doc(db, 'users', authUser.uid, 'macros', 'values'));
+                if (macrosDoc.exists()) {
+                    setMacros(macrosDoc.data());
+                }
+            });
+        }
+
+        fetchMacros()
+    }, [])
+
+    async function generateRecipe(selectedMeal) {
+        setLoadingRecipe(true)
+        let currentMealPlan = mealPlan
+
+        // localhost:8080/mealmacros?carbs=340&fat=75&calories=2100&protein=175&meal1=Oatmeal with Skimmed Milk, Walnut & Blueberries&meal2=Roast Chicken Salad Bowl with Mixed Greens & Sweet Potatoes&meal3=Grilled Salmon with Brown Rice & Broccoli
+        const macrosURL = encodeURI(`https://stirfrai.fly.dev/mealmacros?carbs=${macros.carbs}&protein=${macros.protein}&fat=${macros.fat}&calories=${macros.calories}&meal1=${selectedMeal.name}&meal2=${selectedMeal.m2}&meal3=${selectedMeal.m3}`);
+        const genMacros = await axios.get(macrosURL)
+            .then((resp) => {
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for meal plans", error));
+        const tMacros = genMacros[0]
+
+        // localhost:8080/recipe?carbs=120&fat=25&calories=850&protein=75&dish=Roast Chicken Salad Bowl with Mixed Greens %26 Sweet Potatoes
+        const recipeURL = encodeURI(`https://stirfrai.fly.dev/recipe?carbs=${tMacros.carbs}&protein=${tMacros.protein}&fat=${tMacros.fat}&calories=${tMacros.calories}&dish=${selectedMeal.name}`);
+        const recipe = await axios.get(recipeURL)
+            .then((resp) => {
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for meal plans", error));
+
+        // localhost:8080/ingredients?recipe=<...recipe...>
+        const ingredientsURL = encodeURI(`https://stirfrai.fly.dev/ingredients?recipe=${recipe}`);
+        const ingredients = await axios.get(ingredientsURL)
+            .then((resp) => {
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when querying for meal plans", error));
+
+        // update local state
+        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].ingredients = Object.assign({}, ingredients)
+        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].recipe = recipe
+
+        // update remote state
+        await setDoc(doc(db, 'users', auth.currentUser.uid, 'mealplans', mealPlan.id), {
+            ...currentMealPlan
+        });
+
+        setSelectedMeal(currentMealPlan.values[selectedMeal.index][selectedMeal.meal])
+        setMealPlan(currentMealPlan)
+        setLoadingRecipe(false)
+    }
 
     return loading ?
         (<div className="loadingContainer">
@@ -102,8 +175,36 @@ function View() {
         : validId ?
             (
                 <div className="container">
+                    <Modal
+                        size="lg"
+                        centered
+                        show={showModal}
+                        onHide={() => {
+                            setShowModal(false)
+                        }}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>{selectedMeal.name}</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            {loadingRecipe ? <Pinwheel size={35} color="#231F20" />
+                                :
+                                selectedMeal.recipe ?
+                                    (
+                                        <>
+                                            <div>{selectedMeal.recipe}</div>
+                                            <div>{JSON.stringify(selectedMeal.ingredients)}</div>
+                                        </>
+                                    )
+                                    :
+                                    <Button variant="primary" onClick={() => { generateRecipe(selectedMeal) }}>
+                                        Generate Recipe
+                                    </Button>
+                            }
+                        </Modal.Body>
+                    </Modal>
+
                     <p className="mealPlanTitle">{mealPlan.id}</p>
-                    <MealPlan mealPlan={mealPlan} />
+                    <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
                 </div>
             ) :
             (
