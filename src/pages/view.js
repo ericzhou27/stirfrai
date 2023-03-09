@@ -3,6 +3,8 @@ import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../constants/firebaseConfig"
 import { useLocation } from "react-router-dom";
 import { Pinwheel } from '@uiball/loaders'
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
@@ -89,7 +91,7 @@ function View() {
     const [selectedMeal, setSelectedMeal] = useState({})
     const [showModal, setShowModal] = useState(false)
     const [loadingRecipe, setLoadingRecipe] = useState(false)
-
+    const [showInvalidMealError, setShowInvalidMealError] = useState(false);
 
     const query = useQuery();
 
@@ -169,6 +171,16 @@ function View() {
         setLoadingRecipe(false)
     }
 
+    async function validateMeal(selectedMeal) {
+        const validMealURL = encodeURI(`https://stirfrai.fly.dev/mealvalidation?meal=${selectedMeal}`);
+        return await axios.get(validMealURL)
+            .then((resp) => {
+                return resp.data;
+            })
+            .catch((error) => console.log("received error when validating the new meal name", error));
+
+    }
+
     async function swapRecipe(selectedMeal) {
         setLoadingRecipe(true)
         let currentMealPlan = mealPlan
@@ -211,8 +223,14 @@ function View() {
     }
 
     async function updateIndividualMeal(e) {
+        const newMeal = e.value;
+        const validObj = await validateMeal(newMeal);
+        if (!validObj.valid) {
+            setShowInvalidMealError(true);
+        }
+
         let currentMealPlan = mealPlan;
-        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].name = e.value;
+        currentMealPlan.values[selectedMeal.index][selectedMeal.meal].name = newMeal;
 
         // update remote state
         await setDoc(doc(db, 'users', auth.currentUser.uid, 'mealplans', mealPlan.id), {
@@ -220,13 +238,13 @@ function View() {
         });
 
         let newSelectedMeal = selectedMeal
-        newSelectedMeal.name = e.value
+        newSelectedMeal.name = newMeal
 
         setSelectedMeal(newSelectedMeal)
         setMealPlan(currentMealPlan)
         setLoadingRecipe(false)
 
-        console.log(e.value)
+        console.log("new meal", newMeal)
     }
 
     let recipeStrings = '';
@@ -236,12 +254,11 @@ function View() {
     }
 
     const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
-        const ingredientStrings = ingredients.map(i => (
-            <>
-                {/* {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'>(Amazon Fresh)</a> {i[1] ? `(${i[1]})` : ''} */}
-                {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{color: 'black'}} target='_blank'> {i[1] ? `(${i[1]})` : ''}<img src={amazonFresh} style={{paddingLeft: 15, height: 15}}/></a>
-            </>
-        ))
+    const ingredientStrings = ingredients.map(i => (
+        <>
+            {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{ color: 'black' }} target='_blank'> {i[1] ? `(${i[1]})` : ''}<img src={amazonFresh} style={{ paddingLeft: 15, height: 15 }} /></a>
+        </>
+    ))
 
     return loading ?
         (<div className="loadingContainer">
@@ -287,6 +304,15 @@ function View() {
                                     </>
                             }
                         </Modal.Body>
+                        <Snackbar
+                            open={showInvalidMealError}
+                            autoHideDuration={5000}
+                            onClose={() => setShowInvalidMealError(false)}
+                        >
+                            <Alert onClose={() => setShowInvalidMealError(false)} severity="warning" sx={{ width: '100%' }}>
+                                The meal name you supplied may be invalid.
+                            </Alert>
+                        </Snackbar>
                     </Modal>
 
                     {/* <p className="mealPlanTitle">{mealPlan.name || 'Unnamed Meal Plan'}</p> */}
@@ -295,10 +321,10 @@ function View() {
                         className="mealPlanTitle"
                         inputClassName='mealPlanTitle'
                         defaultValue={mealPlan.name || 'Unnamed Meal Plan'}
-                        editButtonProps={{ style: {backgroundColor: 'transparent'} }}
+                        editButtonProps={{ style: { backgroundColor: 'transparent' } }}
                         onSave={updateMealPlanName} />
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
-                    <div style={{marginTop: 25}} />
+                    <div style={{ marginTop: 25 }} />
                 </div>
             ) :
             (
