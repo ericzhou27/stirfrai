@@ -4,7 +4,8 @@
 .ReactTags__tagInput {
   border-radius: 2px;
   display: inline-block;
-  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: 'Playfair Display';
 }
 .ReactTags__tags {
   text-align: center;
@@ -16,7 +17,11 @@
   margin: 0;
   font-size: 12px;
   border: 1px solid #eee;
-  min-width: 150px;
+  min-width: 250px;
+  padding: 15px;
+  font-size: 14px;
+  text-align: center;
+  border-radius: 10px;
 }
 
 .ReactTags__editInput {
@@ -33,19 +38,24 @@
   flex-wrap: wrap;
   width: 100%;
   max-width: 500px;
+  row-gap: 10px;
 }
 .ReactTags__selected span.ReactTags__tag {
-  border: 1px solid #ddd;
-  background: #63bcfd;
-  color: white;
+  /* border: 1px solid #ddd; */
+  /* background: #63bcfd; */
+  color: black;
   font-size: 12px;
   display: inline-block;
   padding: 5px;
   margin: 0 5px;
   border-radius: 2px;
+  font-family: 'Playfair Display';
+
+  /* box-shadow: 3px 3px 7px #bebebe, -3px -3px 7px #ffffff; */
+  box-shadow: 2px 2px 8px #bebebe, -2px -2px 8px #ffffff;
 }
 .ReactTags__selected a.ReactTags__remove {
-  color: #aaa;
+  color: black;
   margin-left: 5px;
   cursor: pointer;
 }
@@ -79,5 +89,6 @@
   border: none;
   cursor: pointer;
   background: none;
-  color: white;
+  color: black;
+  font-weight: bold;
 }

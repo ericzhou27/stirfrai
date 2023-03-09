@@ -145,15 +145,16 @@ function Create() {
     return (
         <div className="App">
             <div className="container">
-                <p>Create a new meal plan</p>
+                <Typography variant='h3' style={{ fontFamily: 'Playfair Display' }}>Create a new meal plan</Typography>
                 <Typography variant="body1" className='mealPlanPreferenceQuestions'>What preferences do you have (i.e. types of protein, spices, veggies)?</Typography>
                 <ReactTags
                     tags={preferences.likes}
                     delimiters={delimiters}
                     handleDelete={handleLikesDelete}
                     handleAddition={handleLikesAddition}
-                    inputFieldPosition="bottom"
+                    inputFieldPosition="top"
                     autocomplete
+                    allowDragDrop={false}
                 />
                 <Typography variant="body1" className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
                 <ReactTags
@@ -161,8 +162,9 @@ function Create() {
                     delimiters={delimiters}
                     handleDelete={handleDislikesDelete}
                     handleAddition={handleDislikesAddition}
-                    inputFieldPosition="bottom"
+                    inputFieldPosition="top"
                     autocomplete
+                    allowDragDrop={false}
                 />
                 <Typography variant="body1" className="mealPlanPreferenceQuestions">How much time can you spend cooking (in minutes)?</Typography>
                 <Slider
@@ -171,11 +173,11 @@ function Create() {
                     min={5}
                     max={90}
                     step={5}
-                    marks
-                    style={{ width: "50%" }}
+                    style={{ width: "50%", marginTop: 15 }}
                     aria-label="Small"
-                    valueLabelDisplay="on"
+                    valueLabelDisplay="auto"
                     onChange={(e) => setPreferences({ ...preferences, time: e.target.value })}
+                    marks={[{value: 5, label: '5 minutes'}, {value: 90, label: '90 minutes'}]}
                 />
                 <Typography variant="body1" className="mealPlanPreferenceQuestions">How would you describe your cooking abilities?</Typography>
                 <FormControl onChange={(e) => setPreferences({ ...preferences, cookingAbility: e.target.value })}>

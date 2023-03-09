@@ -33,7 +33,7 @@ function Home() {
             <Pinwheel size={35} color="#231F20" />
         </div>)
         : (
-            <div className="container">
+            <div className="container" style={{marginBottom: 25}}>
                 {mealPlans.map((mealPlan) => {
                     return (
                         <div

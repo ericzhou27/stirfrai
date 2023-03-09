@@ -233,13 +233,33 @@ p {
 
 }
 
-.mealPlanPreferenceQuestions {
+div .mealPlanPreferenceQuestions {
   padding: 20px;
   color: black;
+  font-family: 'Playfair Display';
 }
 
 .row-divider {
   width: 1px;
   margin: 10px 0;
   background: black;
+}
+
+.MuiSlider-markLabel.MuiSlider-markLabelActive,
+.MuiTypography-root.MuiTypography-body1.MuiFormControlLabel-label {
+  font-family: 'Playfair Display';
+}
+
+.MuiButtonBase-root.MuiButton-root.MuiLoadingButton-root.MuiButton-contained.MuiButton-containedPrimary:not(.MuiLoadingButton-loading) {
+  font-family: 'Playfair Display';
+  background-color:rgb(146, 146, 146);
+  color: white;
+  box-shadow: 3px 3px 7px #bebebe, -3px -3px 7px #ffffff;
+  transition: box-shadow background-color 0.1s ease-in-out;
+}
+
+.MuiButtonBase-root.MuiButton-root.MuiLoadingButton-root.MuiButton-contained.MuiButton-containedPrimary:hover {
+  box-shadow: 5px 5px 10px #bebebe,
+    -5px -5px 10px #ffffff;
+  background-color: rgb(100, 100, 100);
 }
