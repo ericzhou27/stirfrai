@@ -149,20 +149,37 @@ p {
   cursor: pointer;
 }
 
+
+.editTextContainer {
+  width: 90%;
+  /* padding: 10px; */
+}
+
 .mealPlanTitle {
   font-family: "Playfair Display";
   font-size: 2em;
   font-weight: 600;
   color: black;
-  width: 90%;
-  padding: 10px;
   margin-bottom: 0px;
   padding-left: 0px;
 }
 
+.mealPlanTitle2 {
+  font-family: "Playfair Display";
+  font-size: 2em;
+  font-weight: 600;
+  color: black;
+  width: 90%;
+  margin-bottom: 0px;
+  padding-left: 0px;
+  outline: none;
+  border: none;
+}
+
 
 .mealPlanSection {
-  background: rgba(0, 0, 0, 0.7);
+  /* background: rgba(0, 0, 0, 0.7); */
+  color: black;
   border-radius: 5px;
   width: 90%;
   padding: 10px;
@@ -170,6 +187,9 @@ p {
   justify-content: center;
   align-items: center;
   margin: 20px 0px 0px 0px;
+  box-shadow: 7px 7px 14px #bebebe,
+    -7px -7px 14px #ffffff;
+  transition: box-shadow 0.1s ease-in-out;
 }
 
 .dayContainer {
@@ -182,7 +202,8 @@ p {
   font-family: "Playfair Display";
   font-size: 1.5em;
   font-weight: 600;
-  color: white;
+  color: rgb(65, 65, 65);
+  /* color: white; */
 
 }
 
@@ -198,15 +219,18 @@ p {
 
 .mealContainer:hover {
   opacity: 0.9;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(255, 255, 255, 0.25);
+  /* background-color: rgba(0, 0, 0, 0.5); */
   cursor: pointer;
+  outline: 0.5px solid rgba(255, 255, 255, 0.75)
 }
 
 .mealTitle {
   font-family: "Playfair Display";
   font-size: 1em;
   font-weight: 300;
-  color: white;
+  /* color: white; */
+  color: rgb(65, 65, 65);
   /* border: 1px solid red; */
   width: 20%;
   margin: 0px;
@@ -215,7 +239,8 @@ p {
 .divider {
   /* border: 0.25px solid white; */
   width: 0.5px;
-  background-color: white;
+  background-color: rgb(65, 65, 65);
+  /* background-color: white; */
   height: 2em;
   margin-right: 8%;
 }
@@ -224,7 +249,8 @@ p {
   font-family: "Playfair Display";
   font-size: 1em;
   font-weight: 300;
-  color: white;
+  color: rgb(65, 65, 65);
+  /* color: white; */
   width: 80%;
   margin: 0px;
   /* text-align: right; */
@@ -252,7 +278,7 @@ div .mealPlanPreferenceQuestions {
 
 .MuiButtonBase-root.MuiButton-root.MuiLoadingButton-root.MuiButton-contained.MuiButton-containedPrimary:not(.MuiLoadingButton-loading) {
   font-family: 'Playfair Display';
-  background-color:rgb(146, 146, 146);
+  background-color: rgb(146, 146, 146);
   color: white;
   box-shadow: 3px 3px 7px #bebebe, -3px -3px 7px #ffffff;
   transition: box-shadow background-color 0.1s ease-in-out;
@@ -262,4 +288,51 @@ div .mealPlanPreferenceQuestions {
   box-shadow: 5px 5px 10px #bebebe,
     -5px -5px 10px #ffffff;
   background-color: rgb(100, 100, 100);
+}
+
+.modalParent {
+  width: 80vw;
+  max-width: 90vw !important;
+}
+
+
+.swapButton {
+  font-family: "Playfair Display";
+  background-color: rgb(100, 100, 100);
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  border: 'none';
+  margin-bottom: 5px;
+  transition: background-color 0.1s ease-in-out
+}
+
+.generateButton {
+  font-family: "Playfair Display";
+  background-color: rgb(100, 100, 100);
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  border: 'none';
+  transition: background-color 0.1s ease-in-out
+}
+
+.swapButton:hover,
+.generateButton:hover {
+  background-color: rgb(53, 53, 53);
+  cursor: pointer;
+}
+
+.ingredientsTitle {
+  color: rgb(65, 65, 65);
+  font-family: "Playfair Display";
+  font-style: italic;
+  font-weight: 700;
+  border-bottom: 1px solid rgb(65, 65, 65, 0.5);
+  margin-bottom: 10px;
+}
+
+.ingredientsText {
+  color: rgb(65, 65, 65);
+  font-family: "Playfair Display";
 }

@@ -249,14 +249,15 @@ function View() {
 
     let recipeStrings = '';
     if (selectedMeal && selectedMeal.recipe) {
-        const recipeString = selectedMeal.recipe.substring(selectedMeal.recipe.toLowerCase().indexOf('instructions'));
+        // const recipeString = selectedMeal.recipe.substring(selectedMeal.recipe.toLowerCase().indexOf('instructions'));
+        const recipeString = selectedMeal.recipe.substring(selectedMeal.recipe.toLowerCase().indexOf('instructions') + 13);
         recipeStrings = recipeString.split('\n').filter(v => v);
     }
 
     const ingredients = selectedMeal && selectedMeal.ingredients ? Object.values(selectedMeal.ingredients) : [];
     const ingredientStrings = ingredients.map(i => (
         <>
-            {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{ color: 'black' }} target='_blank'> {i[1] ? `(${i[1]})` : ''}<img src={amazonFresh} style={{ paddingLeft: 15, height: 15 }} /></a>
+            {i[0]} <a href={`https://www.amazon.com/s?k=${i[0]}&i=amazonfresh`} style={{ color: 'black' }} target='_blank'> {i[1] ? `(${i[1]})` : ''}<img src={"https://www.freeiconspng.com/thumbs/cart-icon/basket-cart-icon-27.png"} style={{ paddingLeft: 15, height: 15 }} /></a>
         </>
     ))
 
@@ -270,37 +271,54 @@ function View() {
                     <Modal
                         size="lg"
                         centered
+                        scrollable
+                        dialogClassName='modalParent'
+                        // backdrop="static"
                         show={showModal}
                         onHide={() => {
-                            setShowModal(false)
+                            if (!loadingRecipe) {
+                                setShowModal(false)
+                            }
                         }}>
-                        <Modal.Header closeButton>
+                        <Modal.Header style={{ background: "#e0e0e0", fontFamily: "Playfair Display", width: '90vw', padding: 0 }}>
                             <Modal.Title>
-                                <EditText showEditButton defaultValue={selectedMeal.name} onSave={updateIndividualMeal}>
-                                    {selectedMeal.name ? selectedMeal.name : "Unnamed recipe"}
-                                </EditText>
+                                <div style={{ width: '90vw', padding: 10 }}>
+                                    <EditText showEditButton defaultValue={selectedMeal.name} onSave={updateIndividualMeal}
+                                        style={{ background: '#e0e0e0', fontSize: '1em' }}
+                                        className="mealPlanTitle"
+                                        inputClassName="mealPlanTitle2"
+                                        editButtonProps={{ style: { backgroundColor: 'transparent', width: '1vw' } }}>
+                                        {selectedMeal.name ? selectedMeal.name : "Unnamed recipe"}
+                                    </EditText>
+                                </div>
                             </Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>
+                        <Modal.Body style={{ background: "#e0e0e0" }}>
                             {loadingRecipe ? <Pinwheel size={35} color="#231F20" />
                                 :
                                 selectedMeal.recipe ?
                                     (
-                                        <>
-                                            Ingredients:
+                                        <p className='ingredientsText'>
+                                            <p className='ingredientsTitle'>Ingredients</p>
                                             {ingredientStrings.map(line => <div>{line}</div>)}
                                             <br />
+                                            <p className='ingredientsTitle'>Instructions</p>
                                             {recipeStrings.map(line => <div>{line}</div>)}
-                                        </>
+                                        </p>
                                     )
                                     :
                                     <>
-                                        <Button variant="secondary" style={{ marginRight: 10 }} onClick={() => { swapRecipe(selectedMeal) }}>
+                                        <div
+                                            className='swapButton'
+                                            onClick={() => { swapRecipe(selectedMeal) }}>
                                             Swap Recipe
-                                        </Button>
-                                        <Button variant="primary" onClick={() => { generateRecipe(selectedMeal) }}>
+                                        </div>
+                                        <div className="generateButton" style={{
+                                            fontFamily: "Playfair Display"
+                                        }}
+                                            onClick={() => { generateRecipe(selectedMeal) }}>
                                             Generate Recipe
-                                        </Button>
+                                        </div>
                                     </>
                             }
                         </Modal.Body>
@@ -315,17 +333,20 @@ function View() {
                         </Snackbar>
                     </Modal>
 
-                    {/* <p className="mealPlanTitle">{mealPlan.name || 'Unnamed Meal Plan'}</p> */}
-                    <EditText
-                        showEditButton
-                        className="mealPlanTitle"
-                        inputClassName='mealPlanTitle'
-                        defaultValue={mealPlan.name || 'Unnamed Meal Plan'}
-                        editButtonProps={{ style: { backgroundColor: 'transparent' } }}
-                        onSave={updateMealPlanName} />
+                    <div className='editTextContainer'>
+                        <EditText
+                            style={{ background: '#e0e0e0' }}
+                            showEditButton
+                            className="mealPlanTitle"
+                            inputClassName="mealPlanTitle2"
+                            defaultValue={mealPlan.name || 'Unnamed Meal Plan'}
+                            editButtonProps={{ style: { backgroundColor: 'transparent', width: '1vw' } }}
+                            onSave={updateMealPlanName} />
+                    </div>
                     <MealPlan mealPlan={mealPlan} handleModal={setShowModal} setSelectedMeal={setSelectedMeal} />
-                    <div style={{ marginTop: 25 }} />
-                </div>
+
+                    <div style={{ marginTop: '10vw' }} />
+                </div >
             ) :
             (
                 <div className="loadingContainer">
