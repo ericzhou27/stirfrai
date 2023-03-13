@@ -156,7 +156,7 @@ function Create() {
                     autocomplete
                     allowDragDrop={false}
                 />
-                <Typography variant="body1" className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)?</Typography>
+                <Typography variant="body1" style={{ textAlign: 'center' }} className="mealPlanPreferenceQuestions">What do you not want to see in your recipes (i.e. ingredients, cooking methods)? If you are vegetarian or vegan, include "meat" or "animal products" as tags, respectively.</Typography>
                 <ReactTags
                     tags={preferences.dislikes}
                     delimiters={delimiters}
